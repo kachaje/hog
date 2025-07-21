@@ -125,7 +125,7 @@ func HogVect(imgsrc image.Image, i *ImageInfo) image.Image {
 		draw.Draw(hogimg, imgcell.Bounds(), imgcell, cell.Min, draw.Over)
 		i.Wg.Done()
 	}
-	
+
 	fmt.Printf("\n")
 	return hogimg
 }

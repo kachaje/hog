@@ -47,3 +47,21 @@ func TestDrawLine(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestMagnitude(t *testing.T) {
+	result := hog.Magnitude(5, 5)
+
+	target := 7.0710678118654755
+
+	if result != target {
+		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
+	}
+}
+
+func TestDivide(t *testing.T) {
+	result := hog.Divide(image.Rect(0, 0, 4, 4), 2)
+
+	if len(result) != 4 {
+		t.Fatalf("Test failed. Expected: 4; Actual: %d\n", len(result))
+	}
+}
