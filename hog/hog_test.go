@@ -101,6 +101,8 @@ func TestHogGrayscale(t *testing.T) {
 }
 
 func TestHogSave(t *testing.T) {
+	filename := "outputSave.png"
+
 	reader, err := os.Open(filepath.Join("..", "data", "face.jpg"))
 	if err != nil {
 		t.Fatal(err)
@@ -108,10 +110,8 @@ func TestHogSave(t *testing.T) {
 	defer func() {
 		reader.Close()
 
-		filename := "outputSave.png"
-
 		_, err := os.Stat(filename)
-		if !os.IsNotExist(err) && false {
+		if !os.IsNotExist(err) {
 			os.Remove(filename)
 		}
 	}()
@@ -123,7 +123,7 @@ func TestHogSave(t *testing.T) {
 
 	i := hog.ImageInfo{}
 
-	err = i.Save("outputSave", "png", img)
+	err = i.Save(filename, img)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -136,5 +136,49 @@ func TestHogMagnitude(t *testing.T) {
 
 	if result != target {
 		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
+	}
+}
+
+func TestHogOrientationXY(t *testing.T) {
+	result := hog.OrientationXY(10, 8)
+
+	target := 51.34019174590991
+
+	if result != target {
+		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
+	}
+}
+
+func TestHogVect(t *testing.T) {
+	filename := "face.jpg"
+	outputFilename := "outputHog.png"
+
+	reader, err := os.Open(filepath.Join("..", "data", filename))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		reader.Close()
+
+		_, err := os.Stat(outputFilename)
+		if !os.IsNotExist(err) && false {
+			os.Remove(outputFilename)
+		}
+	}()
+
+	srcImg, format, err := image.Decode(reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	imgInfo := hog.NewImageInfo(format, filename, srcImg.Bounds(), 17, 5)
+
+	grayImg := imgInfo.Grayscale(srcImg)
+
+	imgHog := hog.HogVect(grayImg, imgInfo, false)
+
+	err = imgInfo.Save(outputFilename, imgHog)
+	if err != nil {
+		t.Fatal(err)
 	}
 }

@@ -7,8 +7,10 @@ import (
 	"image/draw"
 	"image/jpeg"
 	"image/png"
+	"log"
 	"math"
 	"os"
+	"strings"
 	"sync"
 )
 
@@ -22,11 +24,11 @@ type Img struct {
 type ImageInfo struct {
 	Wg sync.WaitGroup
 	sync.RWMutex
-	Format   string
-	Name     string
-	Bounds   image.Rectangle
-	Scalsize int
-	Cellsize int
+	Format    string
+	Name      string
+	Bounds    image.Rectangle
+	ScaleSize int
+	CellSize  int
 }
 
 // Constant
@@ -36,6 +38,18 @@ const (
 	K          float64 = 8
 	PI         float64 = math.Pi
 )
+
+// NewImageInfo return ImageInfo struct.
+func NewImageInfo(format, name string, bounds image.Rectangle, scaleSize, cellSize int) *ImageInfo {
+	return &ImageInfo{
+		Wg:        sync.WaitGroup{},
+		Format:    format,
+		Name:      name,
+		Bounds:    bounds,
+		ScaleSize: scaleSize,
+		CellSize:  cellSize,
+	}
+}
 
 // Grayscale gray scale image
 func (i *ImageInfo) Grayscale(imgsrc image.Image) image.Image {
@@ -55,8 +69,16 @@ func (i *ImageInfo) Grayscale(imgsrc image.Image) image.Image {
 }
 
 // Save save image into directory
-func (i *ImageInfo) Save(name, format string, imgsrc image.Image) error {
-	out, err := os.Create(fmt.Sprintf("%s.%s", name, format))
+func (i *ImageInfo) Save(filename string, imgsrc image.Image) error {
+	parts := strings.Split(filename, ".")
+
+	if len(parts) < 2 {
+		return fmt.Errorf("invalid filename %s", filename)
+	}
+
+	format := parts[1]
+
+	out, err := os.Create(filename)
 	if err != nil {
 		return err
 	}
@@ -130,23 +152,36 @@ func DrawLine(p image.Point, angle float64, length int, imgsrc image.Image, c co
 }
 
 // HogVect hog implementation.
-func HogVect(imgsrc image.Image, i *ImageInfo) image.Image {
+func HogVect(imgsrc image.Image, img *ImageInfo, debug bool) image.Image {
 	bound := imgsrc.Bounds()
 	hogimg := image.NewRGBA(bound)
+
 	draw.Draw(hogimg, bound, &image.Uniform{color.Black}, image.Pt(0, 0), draw.Src)
-	cells := Divide(bound, i.Cellsize)
-	midcell := image.Pt(int(i.Cellsize/2)+1, int(i.Cellsize/2)+1)
-	vect := int(i.Cellsize / 2)
+
+	cells := Divide(bound, img.CellSize)
+
+	midcell := image.Pt(int(img.CellSize/2)+1, int(img.CellSize/2)+1)
+	vect := int(img.CellSize / 2)
+
 	c := color.White //color.RGBA{0xff, 0xff, 0xff, 0xff}
-	fmt.Printf("+ There is %d cells\n", len(cells)-1)
+
+	if debug {
+		fmt.Printf("+ There are %d cells\n", len(cells)-1)
+	}
 
 	for k, cell := range cells {
 		if cells[k] == image.Rect(0, 0, 0, 0) {
-			fmt.Printf("\n! Cell out of bound with: %d cell(s)", len(cells)-k)
+			if debug {
+				log.Printf("Cell out of bound with: %d cell(s)\n", len(cells)-k)
+			}
 			break
 		}
-		i.Wg.Add(1)
-		fmt.Printf("- Processing with %d cell\r", k)
+		img.Wg.Add(1)
+
+		if debug {
+			fmt.Printf("- Processing with %d cell\r", k)
+		}
+
 		imgcell := image.NewRGBA(cell)
 		for y := cell.Min.Y; y < cell.Max.Y; y++ {
 			for x := cell.Min.X; x < cell.Max.X; x++ {
@@ -161,9 +196,12 @@ func HogVect(imgsrc image.Image, i *ImageInfo) image.Image {
 		}
 
 		draw.Draw(hogimg, imgcell.Bounds(), imgcell, cell.Min, draw.Over)
-		i.Wg.Done()
+		img.Wg.Done()
 	}
 
-	fmt.Printf("\n")
+	if debug {
+		fmt.Printf("\n")
+	}
+
 	return hogimg
 }
