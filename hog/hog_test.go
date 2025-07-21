@@ -65,3 +65,7 @@ func TestDivide(t *testing.T) {
 		t.Fatalf("Test failed. Expected: 4; Actual: %d\n", len(result))
 	}
 }
+
+func TestHogGrayscale(t *testing.T) {
+
+}

@@ -5,7 +5,11 @@ import (
 	"image"
 	"image/color"
 	"image/draw"
+	"image/jpeg"
+	"image/png"
+	"log"
 	"math"
+	"os"
 	"sync"
 )
 
@@ -33,6 +37,41 @@ const (
 	K          float64 = 8
 	PI         float64 = math.Pi
 )
+
+// Grayscale gray scale image
+func (i *ImageInfo) Grayscale(imgsrc image.Image) image.Image {
+	log.Println("+ Grascaling image ...")
+	if imgsrc.ColorModel() == color.GrayModel {
+		return imgsrc
+	}
+	bounds := imgsrc.Bounds()
+	w, h := bounds.Max.X, bounds.Max.Y
+	gray := image.NewGray(bounds)
+	for x := range w {
+		for y := range h {
+			gray.Set(x, y, color.GrayModel.Convert(imgsrc.At(x, y)))
+		}
+	}
+	return gray
+}
+
+// Save save image into directory
+func (i *ImageInfo) Save(name string, imgsrc image.Image) {
+	out, err := os.Create(fmt.Sprintf("data/%s-%s.gore.%s", name, i.Name, i.Format))
+	if err != nil {
+		log.Fatalf("image.go:makeItGray:os.Create: image: %s %v", name, err)
+	}
+	defer out.Close()
+	
+	log.Printf("Saving %s-%s.%s\n", name, i.Name, i.Format)
+
+	switch i.Format {
+	case "png":
+		png.Encode(out, imgsrc)
+	case "jpg", "jpeg":
+		jpeg.Encode(out, imgsrc, nil)
+	}
+}
 
 // Magnitude calculate the magnitude of two points
 //
