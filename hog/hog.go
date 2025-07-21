@@ -1,4 +1,4 @@
-package models
+package hog
 
 import (
 	"fmt"
@@ -6,16 +6,14 @@ import (
 	"image/color"
 	"image/draw"
 	"math"
-
-	"github.com/kachaje/hog/core"
 )
 
 // HogVect hog implementation.
-func HogVect(imgsrc image.Image, i *core.ImageInfo) image.Image {
+func HogVect(imgsrc image.Image, i *ImageInfo) image.Image {
 	bound := imgsrc.Bounds()
 	hogimg := image.NewRGBA(bound)
 	draw.Draw(hogimg, bound, &image.Uniform{color.Black}, image.ZP, draw.Src)
-	cells := core.Divide(bound, i.Cellsize)
+	cells := Divide(bound, i.Cellsize)
 	midcell := image.Pt(int(i.Cellsize/2)+1, int(i.Cellsize/2)+1)
 	vect := int(i.Cellsize / 2)
 	c := color.White //color.RGBA{0xff, 0xff, 0xff, 0xff}
@@ -32,9 +30,9 @@ func HogVect(imgsrc image.Image, i *core.ImageInfo) image.Image {
 			for x := cell.Min.X; x < cell.Max.X; x++ {
 				yd := math.Abs(float64(imgsrc.At(x, y-1).(color.Gray).Y - imgsrc.At(x, y+1).(color.Gray).Y))
 				xd := math.Abs(float64(imgsrc.At(x-1, y).(color.Gray).Y - imgsrc.At(x+1, y).(color.Gray).Y))
-				magnitude, orientation := core.Magnitude(xd, yd), core.OrientationXY(xd, yd)
+				magnitude, orientation := Magnitude(xd, yd), OrientationXY(xd, yd)
 				if int(magnitude)%16 == 0 { // useful i supose so!
-					imgcell = core.DrawLine(cell.Sub(midcell).Max, orientation, vect, imgcell, c)
+					imgcell = DrawLine(cell.Sub(midcell).Max, orientation, vect, imgcell, c)
 				}
 			}
 

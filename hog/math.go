@@ -1,4 +1,4 @@
-package core
+package hog
 
 import "math"
 

@@ -1,4 +1,4 @@
-package core_test
+package hog_test
 
 import (
 	"image"
@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/kachaje/hog/core"
+	"github.com/kachaje/hog/hog"
 )
 
 func TestDrawSquare(t *testing.T) {
@@ -29,7 +29,7 @@ func TestDrawSquare(t *testing.T) {
 		Max: image.Pt(img.Bounds().Max.X-20, img.Bounds().Max.Y-20),
 	}
 
-	result := core.DrawSquare(img, rect, 0, color.RGBA{R: 255})
+	result := hog.DrawSquare(img, rect, 0, color.RGBA{R: 255})
 
 	if result.Bounds() != bounds {
 		t.Fatal("Test failed")
@@ -65,7 +65,7 @@ func TestDrawLine(t *testing.T) {
 	}
 	bounds := img.Bounds()
 
-	result := core.DrawLine(image.Pt(bounds.Max.X/2, bounds.Max.Y/2), 0.5, 100, img, color.RGBA{R: 255})
+	result := hog.DrawLine(image.Pt(bounds.Max.X/2, bounds.Max.Y/2), 0.5, 100, img, color.RGBA{R: 255})
 
 	if result.Bounds() != bounds {
 		t.Fatal("Test failed")
