@@ -40,7 +40,6 @@ const (
 
 // Grayscale gray scale image
 func (i *ImageInfo) Grayscale(imgsrc image.Image) image.Image {
-	log.Println("+ Grascaling image ...")
 	if imgsrc.ColorModel() == color.GrayModel {
 		return imgsrc
 	}

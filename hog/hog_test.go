@@ -67,5 +67,35 @@ func TestDivide(t *testing.T) {
 }
 
 func TestHogGrayscale(t *testing.T) {
+	reader, err := os.Open(filepath.Join("..", "data", "face.jpg"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer reader.Close()
 
+	img, _, err := image.Decode(reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	i := hog.ImageInfo{}
+
+	result := i.Grayscale(img)
+
+	filename := "outputGray.png"
+
+	outputFile, err := os.Create(filename)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		outputFile.Close()
+
+		os.Remove(filename)
+	}()
+
+	err = jpeg.Encode(outputFile, result, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
 }
