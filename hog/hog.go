@@ -95,14 +95,15 @@ func DrawLine(p image.Point, angle float64, length int, imgsrc image.Image, c co
 func HogVect(imgsrc image.Image, i *ImageInfo) image.Image {
 	bound := imgsrc.Bounds()
 	hogimg := image.NewRGBA(bound)
-	draw.Draw(hogimg, bound, &image.Uniform{color.Black}, image.ZP, draw.Src)
+	draw.Draw(hogimg, bound, &image.Uniform{color.Black}, image.Pt(0, 0), draw.Src)
 	cells := Divide(bound, i.Cellsize)
 	midcell := image.Pt(int(i.Cellsize/2)+1, int(i.Cellsize/2)+1)
 	vect := int(i.Cellsize / 2)
 	c := color.White //color.RGBA{0xff, 0xff, 0xff, 0xff}
 	fmt.Printf("+ There is %d cells\n", len(cells)-1)
+
 	for k, cell := range cells {
-		if cells[k] == image.ZR {
+		if cells[k] == image.Rect(0, 0, 0, 0) {
 			fmt.Printf("\n! Cell out of bound with: %d cell(s)", len(cells)-k)
 			break
 		}
@@ -120,9 +121,11 @@ func HogVect(imgsrc image.Image, i *ImageInfo) image.Image {
 			}
 
 		}
+
 		draw.Draw(hogimg, imgcell.Bounds(), imgcell, cell.Min, draw.Over)
 		i.Wg.Done()
 	}
+	
 	fmt.Printf("\n")
 	return hogimg
 }
