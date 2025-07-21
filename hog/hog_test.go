@@ -128,3 +128,13 @@ func TestHogSave(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestHogMagnitude(t *testing.T) {
+	result := hog.Magnitude(4, 2)
+
+	target := 4.47213595499958
+
+	if result != target {
+		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
+	}
+}
