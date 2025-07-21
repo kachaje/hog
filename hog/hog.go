@@ -7,7 +7,6 @@ import (
 	"image/draw"
 	"image/jpeg"
 	"image/png"
-	"log"
 	"math"
 	"os"
 	"sync"
@@ -51,25 +50,26 @@ func (i *ImageInfo) Grayscale(imgsrc image.Image) image.Image {
 			gray.Set(x, y, color.GrayModel.Convert(imgsrc.At(x, y)))
 		}
 	}
+
 	return gray
 }
 
 // Save save image into directory
-func (i *ImageInfo) Save(name string, imgsrc image.Image) {
-	out, err := os.Create(fmt.Sprintf("data/%s-%s.gore.%s", name, i.Name, i.Format))
+func (i *ImageInfo) Save(name, format string, imgsrc image.Image) error {
+	out, err := os.Create(fmt.Sprintf("%s.%s", name, format))
 	if err != nil {
-		log.Fatalf("image.go:makeItGray:os.Create: image: %s %v", name, err)
+		return err
 	}
 	defer out.Close()
-	
-	log.Printf("Saving %s-%s.%s\n", name, i.Name, i.Format)
 
-	switch i.Format {
+	switch format {
 	case "png":
-		png.Encode(out, imgsrc)
+		return png.Encode(out, imgsrc)
 	case "jpg", "jpeg":
-		jpeg.Encode(out, imgsrc, nil)
+		return jpeg.Encode(out, imgsrc, nil)
 	}
+
+	return nil
 }
 
 // Magnitude calculate the magnitude of two points

@@ -99,3 +99,32 @@ func TestHogGrayscale(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestHogSave(t *testing.T) {
+	reader, err := os.Open(filepath.Join("..", "data", "face.jpg"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		reader.Close()
+
+		filename := "outputSave.png"
+
+		_, err := os.Stat(filename)
+		if !os.IsNotExist(err) && false {
+			os.Remove(filename)
+		}
+	}()
+
+	img, _, err := image.Decode(reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	i := hog.ImageInfo{}
+
+	err = i.Save("outputSave", "png", img)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
