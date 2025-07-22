@@ -16,6 +16,30 @@ func NewHOG(grayImg image.Image) *HOG {
 	}
 }
 
+func (h *HOG) Multiply(A, B [][]float32) ([][]float32, error) {
+	rowsA, colsA := len(A), len(A[0])
+	rowsB, colsB := len(B), len(B[0])
+
+	if colsA != rowsB {
+		return nil, fmt.Errorf("matrix multiplication not valid")
+	}
+
+	C := make([][]float32, rowsA)
+	for i := range C {
+		C[i] = make([]float32, colsB)
+	}
+
+	for i := range rowsA {
+		for j := range colsB {
+			for k := range colsA {
+				C[i][j] += A[i][k] * B[k][j]
+			}
+		}
+	}
+
+	return C, nil
+}
+
 func (h *HOG) GetRegion(r, c, step int) [][]float32 {
 	result := make([][]float32, 3)
 

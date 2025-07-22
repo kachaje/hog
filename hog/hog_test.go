@@ -13,6 +13,34 @@ import (
 	"github.com/kachaje/hog/hog"
 )
 
+func TestMultiply(t *testing.T) {
+	h := hog.NewHOG(nil)
+
+	A := [][]float32{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
+	B := [][]float32{{9, 8}, {6, 5}, {3, 2}}
+
+	result, err := h.Multiply(A, B)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	target := [][]float32{{30, 24}, {84, 69}, {138, 114}}
+
+	if result == nil {
+		t.Fatal("Test failed")
+	}
+
+	for i := range target {
+		for j := range target[i] {
+			if result[i][j] != target[i][j] {
+				t.Fatalf(`Test failed. 
+Expected: %#v; 
+Actual: %#v`, result, target)
+			}
+		}
+	}
+}
+
 func TestGetRegion(t *testing.T) {
 	width := 3
 	height := 3
