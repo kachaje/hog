@@ -1,4 +1,4 @@
-package hog_test
+package lib_test
 
 import (
 	"image"
@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/kachaje/hog/hog"
+	"github.com/kachaje/hog/lib"
 )
 
 func TestDrawLine(t *testing.T) {
@@ -24,7 +24,7 @@ func TestDrawLine(t *testing.T) {
 	}
 	bounds := img.Bounds()
 
-	result := hog.DrawLine(image.Pt(bounds.Max.X/2, bounds.Max.Y/2), 0.5, 100, img, color.RGBA{R: 255})
+	result := lib.DrawLine(image.Pt(bounds.Max.X/2, bounds.Max.Y/2), 0.5, 100, img, color.RGBA{R: 255})
 
 	if result.Bounds() != bounds {
 		t.Fatal("Test failed")
@@ -49,7 +49,7 @@ func TestDrawLine(t *testing.T) {
 }
 
 func TestMagnitude(t *testing.T) {
-	result := hog.Magnitude(5, 5)
+	result := lib.Magnitude(5, 5)
 
 	target := 7.0710678118654755
 
@@ -59,7 +59,7 @@ func TestMagnitude(t *testing.T) {
 }
 
 func TestDivide(t *testing.T) {
-	result := hog.Divide(image.Rect(0, 0, 4, 4), 2)
+	result := lib.Divide(image.Rect(0, 0, 4, 4), 2)
 
 	if len(result) != 4 {
 		t.Fatalf("Test failed. Expected: 4; Actual: %d\n", len(result))
@@ -78,7 +78,7 @@ func TestHogGrayscale(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	i := hog.ImageInfo{}
+	i := lib.ImageInfo{}
 
 	result := i.Grayscale(img)
 
@@ -121,7 +121,7 @@ func TestHogSave(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	i := hog.ImageInfo{}
+	i := lib.ImageInfo{}
 
 	err = i.Save(filename, img)
 	if err != nil {
@@ -130,7 +130,7 @@ func TestHogSave(t *testing.T) {
 }
 
 func TestHogMagnitude(t *testing.T) {
-	result := hog.Magnitude(4, 2)
+	result := lib.Magnitude(4, 2)
 
 	target := 4.47213595499958
 
@@ -140,7 +140,7 @@ func TestHogMagnitude(t *testing.T) {
 }
 
 func TestHogOrientationXY(t *testing.T) {
-	result := hog.OrientationXY(10, 8)
+	result := lib.OrientationXY(10, 8)
 
 	target := 51.34019174590991
 
@@ -171,11 +171,11 @@ func TestHogVect(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	imgInfo := hog.NewImageInfo(format, filename, srcImg.Bounds(), 17, 5)
+	imgInfo := lib.NewImageInfo(format, filename, srcImg.Bounds(), 17, 5)
 
 	grayImg := imgInfo.Grayscale(srcImg)
 
-	imgHog := hog.HogVect(grayImg, imgInfo, false)
+	imgHog := lib.HogVect(grayImg, imgInfo, false)
 
 	err = imgInfo.Save(outputFilename, imgHog)
 	if err != nil {

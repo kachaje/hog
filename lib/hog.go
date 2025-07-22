@@ -1,4 +1,4 @@
-package hog
+package lib
 
 import (
 	"fmt"
