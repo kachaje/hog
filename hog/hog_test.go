@@ -13,13 +13,31 @@ import (
 	"github.com/kachaje/hog/hog"
 )
 
-func TestMultiply(t *testing.T) {
+func TestSumMatrix(t *testing.T) {
+	h := hog.NewHOG(nil)
+
+	arr := []any{
+		1.0,
+		2.0,
+		[]any{3.0, 4.0, []any{5.0, 6.0}},
+		7.0,
+		[]any{8.0, []any{9.0}},
+	}
+
+	result := h.SumMatrix(arr)
+
+	if result != 45 {
+		t.Fatalf("Test failed. Expected: 45; Actual: %v", result)
+	}
+}
+
+func TestMultiplyMatrices(t *testing.T) {
 	h := hog.NewHOG(nil)
 
 	A := [][]float32{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
 	B := [][]float32{{9, 8}, {6, 5}, {3, 2}}
 
-	result, err := h.Multiply(A, B)
+	result, err := h.MultiplyMatrices(A, B)
 	if err != nil {
 		t.Fatal(err)
 	}

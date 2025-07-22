@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"reflect"
 )
 
 type HOG struct {
@@ -16,7 +17,33 @@ func NewHOG(grayImg image.Image) *HOG {
 	}
 }
 
-func (h *HOG) Multiply(A, B [][]float32) ([][]float32, error) {
+func (h *HOG) SumMatrix(arr any) float32 {
+	var result float32
+
+	if reflect.TypeOf(arr).Kind() == reflect.Slice {
+		s := reflect.ValueOf(arr)
+
+		for i := range s.Len() {
+			element := s.Index(i).Interface()
+
+			if val, ok := element.(float32); ok {
+				result += val
+			} else if val, ok := arr.(float64); ok {
+				result += float32(val)
+			} else {
+				result += h.SumMatrix(element)
+			}
+		}
+	} else if val, ok := arr.(float32); ok {
+		result += val
+	} else if val, ok := arr.(float64); ok {
+		result += float32(val)
+	}
+
+	return result
+}
+
+func (h *HOG) MultiplyMatrices(A, B [][]float32) ([][]float32, error) {
 	rowsA, colsA := len(A), len(A[0])
 	rowsB, colsB := len(B), len(B[0])
 
