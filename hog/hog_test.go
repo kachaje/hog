@@ -11,7 +11,7 @@ import (
 )
 
 func TestCalculateGradient(t *testing.T) {
-	reader, err := os.Open(filepath.Join("..", "data", "face.jpg"))
+	reader, err := os.Open(filepath.Join("..", "data", "flower.jpg"))
 	if err != nil {
 		t.Fatal(err)
 	}
