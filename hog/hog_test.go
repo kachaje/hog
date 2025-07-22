@@ -1,6 +1,7 @@
 package hog_test
 
 import (
+	"fmt"
 	"image"
 	"os"
 	"path/filepath"
@@ -127,5 +128,5 @@ func TestCalculateGradient(t *testing.T) {
 
 	result := h.CalculateGradient(template)
 
-	_ = result
+	fmt.Printf("%#v\n", result)
 }

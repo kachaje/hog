@@ -83,23 +83,22 @@ func (h *HOG) GetRegion(r, c, step int) [][]float32 {
 	return result
 }
 
-func (h *HOG) CalculateGradient(template [][]float32) image.Image {
+func (h *HOG) CalculateGradient(template [][]float32) [][]float32 {
 	step := len(template)
 
 	bounds := h.grayImg.Bounds()
 
 	rect := image.Rectangle{
-		Min: image.Pt(0, 0),
 		Max: image.Pt(bounds.Max.X+step-1, bounds.Max.Y+step-1),
 	}
 
-	newImg := image.NewRGBA(rect)
-	result := image.NewRGBA(rect)
+	result := make([][]float32, rect.Max.Y)
+	for i := range rect.Max.Y {
+		result[i] = make([]float32, rect.Max.X)
+	}
 
-	_ = newImg
-
-	for r := range h.grayImg.Bounds().Max.X {
-		for c := range h.grayImg.Bounds().Max.Y {
+	for r := range h.grayImg.Bounds().Max.Y {
+		for c := range h.grayImg.Bounds().Max.X {
 			currentRegion := h.GetRegion(r, c, step)
 
 			currentResult, err := h.MultiplyMatrices(currentRegion, template)
@@ -108,7 +107,9 @@ func (h *HOG) CalculateGradient(template [][]float32) image.Image {
 				continue
 			}
 
-			fmt.Println(currentResult)
+			score := h.SumMatrix(currentResult)
+
+			result[r][c] = score
 		}
 	}
 
