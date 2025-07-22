@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"log"
 	"reflect"
 )
 
@@ -82,8 +83,8 @@ func (h *HOG) GetRegion(r, c, step int) [][]float32 {
 	return result
 }
 
-func (h *HOG) CalculateGradient(template any) image.Image {
-	step := len(template.([]any))
+func (h *HOG) CalculateGradient(template [][]float32) image.Image {
+	step := len(template)
 
 	bounds := h.grayImg.Bounds()
 
@@ -101,7 +102,13 @@ func (h *HOG) CalculateGradient(template any) image.Image {
 		for c := range h.grayImg.Bounds().Max.Y {
 			currentRegion := h.GetRegion(r, c, step)
 
-			fmt.Printf("(%v, %v) - %v\n", r, c, currentRegion)
+			currentResult, err := h.MultiplyMatrices(currentRegion, template)
+			if err != nil {
+				log.Println(err)
+				continue
+			}
+
+			fmt.Println(currentResult)
 		}
 	}
 

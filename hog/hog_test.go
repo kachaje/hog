@@ -123,7 +123,7 @@ func TestCalculateGradient(t *testing.T) {
 
 	h := hog.NewHOG(grayImg)
 
-	template := []any{-1, 0, 1}
+	template := [][]float32{{-1}, {0}, {1}}
 
 	result := h.CalculateGradient(template)
 
