@@ -1,7 +1,6 @@
 package hog_test
 
 import (
-	"fmt"
 	"image"
 	"os"
 	"path/filepath"
@@ -128,5 +127,7 @@ func TestCalculateGradient(t *testing.T) {
 
 	result := h.CalculateGradient(template)
 
-	fmt.Printf("%#v\n", result)
+	if len(result) != 429 {
+		t.Fatalf("Test failed. Expected: 429; Actual: %v", len(result))
+	}
 }
