@@ -126,25 +126,27 @@ func TestGradX(t *testing.T) {
 
 	h := hog.HOG{}
 
-	result := h.GradX(img, 95, 64)
+	grayImg := h.ImgToGray(img)
 
-	target := float32(0.04669261)
+	result := h.GradX(*grayImg, 32, 64)
 
-	if result != target {
-		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
-	}
-
-	result = h.GradX(img, 0, 0)
-
-	target = float32(0.027237354)
+	target := float32(0.066147864)
 
 	if result != target {
 		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
 	}
 
-	result = h.GradX(img, 190, 127)
+	result = h.GradX(*grayImg, 0, 0)
 
-	target = float32(-0.027237354)
+	target = float32(0.031128405)
+
+	if result != target {
+		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
+	}
+
+	result = h.GradX(*grayImg, 190, 127)
+
+	target = float32(0.0)
 
 	if result != target {
 		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
@@ -165,25 +167,27 @@ func TestGradY(t *testing.T) {
 
 	h := hog.HOG{}
 
-	result := h.GradY(img, 95, 64)
+	grayImg := h.ImgToGray(img)
 
-	target := float32(-0.027237356)
+	result := h.GradY(*grayImg, 32, 64)
 
-	if result != target {
-		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
-	}
-
-	result = h.GradY(img, 0, 0)
-
-	target = float32(0.027237354)
+	target := float32(0.04280156)
 
 	if result != target {
 		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
 	}
 
-	result = h.GradY(img, 190, 127)
+	result = h.GradY(*grayImg, 0, 0)
 
-	target = float32(-0.027237354)
+	target = float32(0.031128405)
+
+	if result != target {
+		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
+	}
+
+	result = h.GradY(*grayImg, 190, 127)
+
+	target = float32(0)
 
 	if result != target {
 		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)

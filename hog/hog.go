@@ -56,7 +56,7 @@ func (h *HOG) ResizeShrink(img image.Image, width, height int) image.Image {
 	return newImg
 }
 
-func (h *HOG) GradX(img image.Image, x, y int) float32 {
+func (h *HOG) GradX(img image.Gray, x, y int) float32 {
 	g1 := float32(img.At(x, y-1).(color.Gray).Y) / 257.0
 	g2 := float32(img.At(x, y+1).(color.Gray).Y) / 257.0
 
@@ -65,7 +65,7 @@ func (h *HOG) GradX(img image.Image, x, y int) float32 {
 	return grad
 }
 
-func (h *HOG) GradY(img image.Image, x, y int) float32 {
+func (h *HOG) GradY(img image.Gray, x, y int) float32 {
 	g1 := float32(img.At(x-1, y).(color.Gray).Y) / 257.0
 	g2 := float32(img.At(x+1, y).(color.Gray).Y) / 257.0
 
