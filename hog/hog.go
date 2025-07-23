@@ -3,8 +3,9 @@ package hog
 import (
 	"image"
 	"image/color"
-	"image/draw"
 	"math"
+
+	"golang.org/x/image/draw"
 )
 
 type HOG struct {
@@ -45,6 +46,14 @@ func (h *HOG) ResizeImg(img image.Image, height int) image.Image {
 	}
 
 	return resizedImage
+}
+
+func (h *HOG) ResizeShrink(img image.Image, width, height int) image.Image {
+	newImg := image.NewRGBA(image.Rect(0, 0, width, height))
+
+	draw.NearestNeighbor.Scale(newImg, newImg.Rect, img, img.Bounds(), draw.Over, nil)
+
+	return newImg
 }
 
 func (h *HOG) GradX(img image.Image, x, y int) float32 {

@@ -78,6 +78,40 @@ func TestResizeImg(t *testing.T) {
 	}
 }
 
+func TestResize(t *testing.T) {
+	reader, err := os.Open(filepath.Join("..", "data", "flower.jpg"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer reader.Close()
+
+	img, _, err := image.Decode(reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	h := hog.HOG{}
+
+	newImg := h.ResizeShrink(img, 64, 128)
+
+	filename := "outputShrink.png"
+
+	outputFile, err := os.Create(filename)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		outputFile.Close()
+
+		os.Remove(filename)
+	}()
+
+	err = jpeg.Encode(outputFile, newImg, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestGradX(t *testing.T) {
 	reader, err := os.Open(filepath.Join("..", "data", "thumbnailGray.png"))
 	if err != nil {
