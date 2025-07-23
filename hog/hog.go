@@ -56,6 +56,23 @@ func (h *HOG) ResizeShrink(img image.Image, width, height int) image.Image {
 	return newImg
 }
 
+func (h *HOG) ImgToArray(img image.Gray) [][]float32 {
+	bounds := img.Bounds()
+	width, height := bounds.Max.X, bounds.Max.Y
+
+	pixelArray := make([][]float32, height)
+
+	for y := range height {
+		pixelArray[y] = make([]float32, width)
+
+		for x := range width {
+			pixelArray[y][x] = float32(img.At(x, y).(color.Gray).Y)
+		}
+	}
+
+	return pixelArray
+}
+
 func (h *HOG) GradX(img image.Gray, x, y int) float32 {
 	g1 := float32(img.At(x, y-1).(color.Gray).Y) / 257.0
 	g2 := float32(img.At(x, y+1).(color.Gray).Y) / 257.0
