@@ -1,6 +1,7 @@
 package features
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"math"
@@ -81,4 +82,29 @@ func (f *Features) MagnitudeTheta(img [][]float32) ([][]float32, [][]float32) {
 	}
 
 	return mag, theta
+}
+
+func (f *Features) ArrayToImg(data [][]float32) (image.Image, error) {
+	height := len(data)
+	if height == 0 {
+		return nil, fmt.Errorf("pixel data is empty")
+	}
+	width := len(data[0])
+	if width == 0 {
+		return nil, fmt.Errorf("inner array of pixel data is empty")
+	}
+
+	img := image.NewGray(image.Rect(0, 0, width, height))
+
+	for y := range height {
+		for x := range width {
+			value := uint8(data[y][x])
+
+			c := color.Gray{value}
+
+			img.Set(x, y, c)
+		}
+	}
+
+	return img, nil
 }

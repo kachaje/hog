@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	_ "image/jpeg"
+	"image/png"
 
 	"github.com/kachaje/hog/features"
 	"github.com/kachaje/hog/hog"
@@ -126,5 +127,76 @@ Expected: %#v;
 Actual: %#v`, thetaData, theta)
 			}
 		}
+	}
+}
+
+func TestArrayToImg(t *testing.T) {
+	var magData, thetaData [][]float32
+
+	data, err := os.ReadFile("./fixtures/magnitudes.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = json.Unmarshal(data, &magData)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	data, err = os.ReadFile("./fixtures/thetas.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = json.Unmarshal(data, &thetaData)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	f := features.Features{}
+
+	magFilename := "outputMag.png"
+	thetaFilename := "outputTheta.png"
+
+	magFile, err := os.Create(magFilename)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		magFile.Close()
+
+		if false {
+			os.Remove(magFilename)
+		}
+	}()
+
+	magImg, err := f.ArrayToImg(magData)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err := png.Encode(magFile, magImg); err != nil {
+		t.Fatal(err)
+	}
+
+	thetaFile, err := os.Create(thetaFilename)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		magFile.Close()
+
+		if false {
+			os.Remove(thetaFilename)
+		}
+	}()
+
+	thetaImg, err := f.ArrayToImg(thetaData)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err := png.Encode(thetaFile, thetaImg); err != nil {
+		t.Fatal(err)
 	}
 }
