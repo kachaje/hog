@@ -77,3 +77,42 @@ func TestResizeImg(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestGradX(t *testing.T) {
+	reader, err := os.Open(filepath.Join("..", "data", "thumbnailGray.png"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer reader.Close()
+
+	img, _, err := image.Decode(reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	h := hog.HOG{}
+
+	result := h.GradX(img, 95, 64)
+
+	target := float32(0.04669261)
+
+	if result != target {
+		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
+	}
+
+	result = h.GradX(img, 0, 0)
+
+	target = float32(0.027237354)
+
+	if result != target {
+		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
+	}
+
+	result = h.GradX(img, 190, 127)
+
+	target = float32(-0.027237354)
+
+	if result != target {
+		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
+	}
+}

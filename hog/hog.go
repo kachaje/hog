@@ -44,3 +44,19 @@ func (h *HOG) ResizeImg(img image.Image, height int) image.Image {
 
 	return resizedImage
 }
+
+func (h *HOG) GradX(img image.Image, x, y int) float32 {
+	g1 := float32(img.At(x, y-1).(color.Gray).Y) / 257.0
+	g2 := float32(img.At(x, y+1).(color.Gray).Y) / 257.0
+
+	grad := g2 - g1
+
+	return grad
+}
+
+func (h *HOG) Gradient(img image.Gray) ([][]float32, image.Gray) {
+	var hog [][]float32
+	var hogImg image.Gray
+
+	return hog, hogImg
+}
