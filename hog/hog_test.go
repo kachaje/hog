@@ -182,6 +182,28 @@ func TestGradOrien(t *testing.T) {
 	}
 }
 
+func TestAngleWeight(t *testing.T) {
+	h := hog.HOG{}
+
+	s, p1, e, p2 := h.AngleWeight(13.6, 36)
+
+	if s != 1 {
+		t.Fatalf("Test failed. Expected: 1; Actual: %v", s)
+	}
+
+	if p1 != 2.72 {
+		t.Fatalf("Test failed. Expected: 2.72; Actual: %v", p1)
+	}
+
+	if e != 2 {
+		t.Fatalf("Test failed. Expected: 2; Actual: %v", e)
+	}
+
+	if p2 != 10.88 {
+		t.Fatalf("Test failed. Expected: 10.88; Actual: %v", p2)
+	}
+}
+
 func TestCalculateGradients(t *testing.T) {
 	reader, err := os.Open(filepath.Join("..", "data", "thumbnailGray.png"))
 	if err != nil {

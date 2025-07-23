@@ -70,10 +70,27 @@ func (h *HOG) GradOrien(gx, gy float32) (float64, float64, float64) {
 	gy2 := float64(gy * gy)
 
 	magnitude := math.Sqrt(gx2 + gy2)
-	orientationRad := math.Atan2(float64(gy), float64(gx))
+	orientationRad := math.Atan(float64(gy) / float64(gx))
 	orientationDeg := orientationRad * 180 / math.Pi
 
 	return magnitude, orientationRad, orientationDeg
+}
+
+func (h *HOG) AngleWeight(magnitude, degrees float32) (float32, float32, float32, float32) {
+	var groupStart float32
+	var groupEnd float32
+	var part1 float32
+	var part2 float32
+
+	binSize := float32(20)
+
+	groupStart = float32(int(degrees/binSize)) * binSize
+	groupEnd = groupStart + binSize
+
+	part1 = ((groupEnd - degrees) / binSize) * magnitude
+	part2 = ((degrees - groupStart) / binSize) * magnitude
+
+	return groupStart / binSize, part1, groupEnd / binSize, part2
 }
 
 func (h *HOG) CalculateGradients(img image.Image) ([][]float32, image.Image, []int) {
@@ -87,7 +104,7 @@ func (h *HOG) CalculateGradients(img image.Image) ([][]float32, image.Image, []i
 			gy := h.GradY(img, c, r)
 			mag, _, deg := h.GradOrien(gx, gy)
 
-			fmt.Println(mag, deg)
+			fmt.Println(int(mag), int(deg))
 		}
 	}
 
