@@ -94,7 +94,9 @@ func TestResize(t *testing.T) {
 
 	newImg := h.ResizeShrink(img, 64, 128)
 
-	filename := "outputShrink.png"
+	grayImg := h.ImgToGray(newImg)
+
+	filename := "outputShrink.jpg"
 
 	outputFile, err := os.Create(filename)
 	if err != nil {
@@ -106,14 +108,14 @@ func TestResize(t *testing.T) {
 		os.Remove(filename)
 	}()
 
-	err = jpeg.Encode(outputFile, newImg, nil)
+	err = jpeg.Encode(outputFile, grayImg, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestGradX(t *testing.T) {
-	reader, err := os.Open(filepath.Join("..", "data", "thumbnailGray.png"))
+	reader, err := os.Open(filepath.Join("..", "data", "flowerGray.jpg"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -130,7 +132,7 @@ func TestGradX(t *testing.T) {
 
 	result := h.GradX(*grayImg, 32, 64)
 
-	target := float32(0.066147864)
+	target := float32(0.073929965)
 
 	if result != target {
 		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
@@ -154,7 +156,7 @@ func TestGradX(t *testing.T) {
 }
 
 func TestGradY(t *testing.T) {
-	reader, err := os.Open(filepath.Join("..", "data", "thumbnailGray.png"))
+	reader, err := os.Open(filepath.Join("..", "data", "flowerGray.jpg"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -171,7 +173,7 @@ func TestGradY(t *testing.T) {
 
 	result := h.GradY(*grayImg, 32, 64)
 
-	target := float32(0.04280156)
+	target := float32(0.03891051)
 
 	if result != target {
 		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
