@@ -108,3 +108,37 @@ func (f *Features) ArrayToImg(data [][]float32) (image.Image, error) {
 
 	return img, nil
 }
+
+func (f *Features) HistogramPointsNine(mag, theta [][]float32) [][]float32 {
+	hist := make([][]float32, 0)
+
+	step := 8
+	numberOfBins := 9
+	height := len(mag)
+	width := len(mag[0])
+
+	for i := 0; i < height; i += step {
+		temp := make([][]float32, 0)
+		_ = temp
+
+		for j := 0; j < width; j += step {
+			magnitudeValues := make([][]float32, step)
+			angleValues := make([][]float32, step)
+
+			_ = angleValues
+
+			for k := range len(magnitudeValues) {
+				magnitudeValues[k] = make([]float32, step)
+				angleValues[k] = make([]float32, step)
+
+				for l := range len(magnitudeValues[0]) {
+					bins := make([]float32, numberOfBins)
+
+					fmt.Println(i, j, k, l, bins)
+				}
+			}
+		}
+	}
+
+	return hist
+}

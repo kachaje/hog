@@ -2,6 +2,7 @@ package features_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"image"
 	"os"
 	"path/filepath"
@@ -195,4 +196,34 @@ func TestArrayToImg(t *testing.T) {
 	if err := png.Encode(thetaFile, thetaImg); err != nil {
 		t.Fatal(err)
 	}
+}
+
+func TestHistogramPointsNine(t *testing.T) {
+	var magData, thetaData [][]float32
+
+	data, err := os.ReadFile("./fixtures/magnitudes.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = json.Unmarshal(data, &magData)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	data, err = os.ReadFile("./fixtures/thetas.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = json.Unmarshal(data, &thetaData)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	f := features.Features{}
+
+	hist := f.HistogramPointsNine(magData, thetaData)
+
+	fmt.Println(hist)
 }
