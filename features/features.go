@@ -9,6 +9,11 @@ import (
 
 type Features struct{}
 
+var (
+	numberOfBins = 9
+	stepSize     = 180 / numberOfBins
+)
+
 func (f *Features) ImgToArray(img image.Gray) [][]float32 {
 	bounds := img.Bounds()
 	width, height := bounds.Max.X, bounds.Max.Y
@@ -109,11 +114,31 @@ func (f *Features) ArrayToImg(data [][]float32) (image.Image, error) {
 	return img, nil
 }
 
+func (f *Features) CalculateJ(angle float32) float32 {
+	temp := (angle / float32(stepSize)) - 0.5
+
+	j := math.Floor(float64(temp))
+
+	return float32(j)
+}
+
+func (f *Features) Partition(data [][]float32, y, x, step int) [][]float32 {
+	result := make([][]float32, step)
+
+	for i := range step {
+		result[i] = make([]float32, step)
+		for j := range step {
+			result[i][j] = data[y+i][x+j]
+		}
+	}
+
+	return result
+}
+
 func (f *Features) HistogramPointsNine(mag, theta [][]float32) [][]float32 {
 	hist := make([][]float32, 0)
 
 	step := 8
-	numberOfBins := 9
 	height := len(mag)
 	width := len(mag[0])
 
@@ -128,8 +153,11 @@ func (f *Features) HistogramPointsNine(mag, theta [][]float32) [][]float32 {
 			_ = angleValues
 
 			for k := range len(magnitudeValues) {
-				magnitudeValues[k] = make([]float32, step)
-				angleValues[k] = make([]float32, step)
+				magnitudeValues = f.Partition(mag, i, j+k, step)
+				angleValues = f.Partition(theta, i, j+k, step)
+
+				fmt.Println(magnitudeValues)
+				fmt.Println(angleValues)
 
 				for l := range len(magnitudeValues[0]) {
 					bins := make([]float32, numberOfBins)

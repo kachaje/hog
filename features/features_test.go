@@ -198,6 +198,41 @@ func TestArrayToImg(t *testing.T) {
 	}
 }
 
+func TestPartition(t *testing.T) {
+	data := [][]float32{
+		{1, 2, 3, 4, 5, 6, 7, 8},
+		{10, 11, 12, 13, 14, 15, 16},
+		{17, 18, 19, 20, 21, 22, 23, 24},
+		{25, 26, 27, 28, 29, 20, 31, 32},
+		{33, 34, 35, 36, 37, 38, 39, 40},
+	}
+	target := [][]float32{
+		{12, 13, 14},
+		{19, 20, 21},
+		{27, 28, 29},
+	}
+
+	step := 3
+
+	f := features.Features{}
+
+	result := f.Partition(data, 1, 2, step)
+
+	if result == nil {
+		t.Fatal("Test failed")
+	}
+
+	for i := range len(target) {
+		for j := range len(target[0]) {
+			if result[i][j] != target[i][j] {
+				t.Fatalf(`Test failed. 
+Expected: %#v; 
+Actual: %#v`, target, result)
+			}
+		}
+	}
+}
+
 func TestHistogramPointsNine(t *testing.T) {
 	var magData, thetaData [][]float32
 
