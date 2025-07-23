@@ -2,6 +2,7 @@ package features_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"image"
 	"os"
 	"path/filepath"
@@ -57,4 +58,28 @@ Actual: %#v`, result, target)
 			}
 		}
 	}
+}
+
+func TestMagnitudeTheta(t *testing.T) {
+	var target [][]float32
+
+	data, err := os.ReadFile("../data/dump.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = json.Unmarshal(data, &target)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	f := features.Features{}
+
+	mag, theta := f.MagnitudeTheta(target)
+
+	fmt.Println(mag)
+
+	fmt.Println("-------------------")
+
+	fmt.Println(theta)
 }
