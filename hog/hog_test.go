@@ -155,3 +155,28 @@ func TestGradY(t *testing.T) {
 		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
 	}
 }
+
+func TestGradOrien(t *testing.T) {
+	gx := float32(11)
+	gy := float32(8)
+
+	h := hog.HOG{}
+
+	mag, ori, deg := h.GradOrien(gx, gy)
+
+	targetMag := 13.601470508735444
+	targetOri := 0.628796286415433
+	targetDeg := 36.02737338510361
+
+	if mag != targetMag {
+		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", targetMag, mag)
+	}
+
+	if ori != targetOri {
+		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", targetOri, ori)
+	}
+
+	if deg != targetDeg {
+		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", targetDeg, deg)
+	}
+}

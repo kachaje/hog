@@ -4,6 +4,7 @@ import (
 	"image"
 	"image/color"
 	"image/draw"
+	"math"
 )
 
 type HOG struct{}
@@ -61,6 +62,17 @@ func (h *HOG) GradY(img image.Image, x, y int) float32 {
 	grad := g2 - g1
 
 	return grad
+}
+
+func (h *HOG) GradOrien(gx, gy float32) (float64, float64, float64) {
+	gx2 := float64(gx * gx)
+	gy2 := float64(gy * gy)
+
+	magnitude := math.Sqrt(gx2 + gy2)
+	orientationRad := math.Atan2(float64(gy), float64(gx))
+	orientationDeg := orientationRad * 180 / math.Pi
+
+	return magnitude, orientationRad, orientationDeg
 }
 
 func (h *HOG) Gradient(img image.Gray) ([][]float32, image.Gray) {
