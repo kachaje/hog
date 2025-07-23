@@ -1,6 +1,7 @@
 package hog
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"image/draw"
@@ -47,8 +48,8 @@ func (h *HOG) ResizeImg(img image.Image, height int) image.Image {
 }
 
 func (h *HOG) GradX(img image.Image, x, y int) float32 {
-	g1 := float32(img.At(x, y-1).(color.Gray).Y) / 257.0
-	g2 := float32(img.At(x, y+1).(color.Gray).Y) / 257.0
+	g1 := float32(img.At(x, y-1).(color.Gray).Y)
+	g2 := float32(img.At(x, y+1).(color.Gray).Y)
 
 	grad := g2 - g1
 
@@ -56,8 +57,8 @@ func (h *HOG) GradX(img image.Image, x, y int) float32 {
 }
 
 func (h *HOG) GradY(img image.Image, x, y int) float32 {
-	g1 := float32(img.At(x-1, y).(color.Gray).Y) / 257.0
-	g2 := float32(img.At(x+1, y).(color.Gray).Y) / 257.0
+	g1 := float32(img.At(x-1, y).(color.Gray).Y)
+	g2 := float32(img.At(x+1, y).(color.Gray).Y)
 
 	grad := g2 - g1
 
@@ -75,9 +76,20 @@ func (h *HOG) GradOrien(gx, gy float32) (float64, float64, float64) {
 	return magnitude, orientationRad, orientationDeg
 }
 
-func (h *HOG) Gradient(img image.Gray) ([][]float32, image.Gray) {
+func (h *HOG) CalculateGradients(img image.Image) ([][]float32, image.Image, []int) {
 	var hog [][]float32
-	var hogImg image.Gray
+	var hogImg image.Image
+	hist := []int{0, 0, 0, 0, 0, 0, 0, 0, 0}
 
-	return hog, hogImg
+	for r := range img.Bounds().Max.Y {
+		for c := range img.Bounds().Max.X {
+			gx := h.GradX(img, c, r)
+			gy := h.GradY(img, c, r)
+			mag, _, deg := h.GradOrien(gx, gy)
+
+			fmt.Println(mag, deg)
+		}
+	}
+
+	return hog, hogImg, hist
 }

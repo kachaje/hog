@@ -1,6 +1,7 @@
 package hog_test
 
 import (
+	"fmt"
 	"image"
 	"image/jpeg"
 	"os"
@@ -94,7 +95,7 @@ func TestGradX(t *testing.T) {
 
 	result := h.GradX(img, 95, 64)
 
-	target := float32(0.04669261)
+	target := float32(12)
 
 	if result != target {
 		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
@@ -102,7 +103,7 @@ func TestGradX(t *testing.T) {
 
 	result = h.GradX(img, 0, 0)
 
-	target = float32(0.027237354)
+	target = float32(7)
 
 	if result != target {
 		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
@@ -110,7 +111,7 @@ func TestGradX(t *testing.T) {
 
 	result = h.GradX(img, 190, 127)
 
-	target = float32(-0.027237354)
+	target = float32(-7.000000)
 
 	if result != target {
 		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
@@ -133,7 +134,7 @@ func TestGradY(t *testing.T) {
 
 	result := h.GradY(img, 95, 64)
 
-	target := float32(-0.027237356)
+	target := float32(-7.000000)
 
 	if result != target {
 		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
@@ -141,7 +142,7 @@ func TestGradY(t *testing.T) {
 
 	result = h.GradY(img, 0, 0)
 
-	target = float32(0.027237354)
+	target = float32(7.000000)
 
 	if result != target {
 		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
@@ -149,7 +150,7 @@ func TestGradY(t *testing.T) {
 
 	result = h.GradY(img, 190, 127)
 
-	target = float32(-0.027237354)
+	target = float32(-7.000000)
 
 	if result != target {
 		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
@@ -179,4 +180,23 @@ func TestGradOrien(t *testing.T) {
 	if deg != targetDeg {
 		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", targetDeg, deg)
 	}
+}
+
+func TestCalculateGradients(t *testing.T) {
+	reader, err := os.Open(filepath.Join("..", "data", "thumbnailGray.png"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer reader.Close()
+
+	img, _, err := image.Decode(reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	h := hog.HOG{}
+
+	_, _, hist := h.CalculateGradients(img)
+
+	fmt.Println(hist)
 }
