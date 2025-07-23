@@ -165,9 +165,7 @@ func TestArrayToImg(t *testing.T) {
 	defer func() {
 		magFile.Close()
 
-		if false {
-			os.Remove(magFilename)
-		}
+		os.Remove(magFilename)
 	}()
 
 	magImg, err := f.ArrayToImg(magData)
@@ -186,9 +184,7 @@ func TestArrayToImg(t *testing.T) {
 	defer func() {
 		magFile.Close()
 
-		if false {
-			os.Remove(thetaFilename)
-		}
+		os.Remove(thetaFilename)
 	}()
 
 	thetaImg, err := f.ArrayToImg(thetaData)

@@ -36,8 +36,8 @@ func (f *Features) MagnitudeTheta(img [][]float32) ([][]float32, [][]float32) {
 	for i := range height {
 		var Gx, Gy float32
 
-		mag[i] = make([]float32, width)
-		theta[i] = make([]float32, width)
+		mag[i] = make([]float32, 0)
+		theta[i] = make([]float32, 0)
 
 		for j := range width {
 			// Condition for axis 0
