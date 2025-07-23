@@ -1,7 +1,6 @@
 package hog_test
 
 import (
-	"fmt"
 	"image"
 	"image/jpeg"
 	"os"
@@ -95,7 +94,7 @@ func TestGradX(t *testing.T) {
 
 	result := h.GradX(img, 95, 64)
 
-	target := float32(12)
+	target := float32(0.04669261)
 
 	if result != target {
 		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
@@ -103,7 +102,7 @@ func TestGradX(t *testing.T) {
 
 	result = h.GradX(img, 0, 0)
 
-	target = float32(7)
+	target = float32(0.027237354)
 
 	if result != target {
 		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
@@ -111,7 +110,7 @@ func TestGradX(t *testing.T) {
 
 	result = h.GradX(img, 190, 127)
 
-	target = float32(-7.000000)
+	target = float32(-0.027237354)
 
 	if result != target {
 		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
@@ -134,7 +133,7 @@ func TestGradY(t *testing.T) {
 
 	result := h.GradY(img, 95, 64)
 
-	target := float32(-7.000000)
+	target := float32(-0.027237356)
 
 	if result != target {
 		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
@@ -142,7 +141,7 @@ func TestGradY(t *testing.T) {
 
 	result = h.GradY(img, 0, 0)
 
-	target = float32(7.000000)
+	target = float32(0.027237354)
 
 	if result != target {
 		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
@@ -150,7 +149,7 @@ func TestGradY(t *testing.T) {
 
 	result = h.GradY(img, 190, 127)
 
-	target = float32(-7.000000)
+	target = float32(-0.027237354)
 
 	if result != target {
 		t.Fatalf("Test failed. Expected: %f; Actual: %f\n", target, result)
@@ -220,5 +219,17 @@ func TestCalculateGradients(t *testing.T) {
 
 	_, _, hist := h.CalculateGradients(img)
 
-	fmt.Println(hist)
+	target := []float32{194.86472, 280.97842, 352.12576, 246.9297, 252.13818, 51.715504, 0, 0, 0}
+
+	if hist == nil {
+		t.Fatal("Test failed")
+	}
+
+	for i := range target {
+		if hist[i] != target[i] {
+			t.Fatalf(`Test failed. 
+Expected: %#v; 
+Actual: %#v`, hist, target)
+		}
+	}
 }

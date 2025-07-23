@@ -1,7 +1,6 @@
 package hog
 
 import (
-	"fmt"
 	"image"
 	"image/color"
 	"image/draw"
@@ -48,8 +47,8 @@ func (h *HOG) ResizeImg(img image.Image, height int) image.Image {
 }
 
 func (h *HOG) GradX(img image.Image, x, y int) float32 {
-	g1 := float32(img.At(x, y-1).(color.Gray).Y)
-	g2 := float32(img.At(x, y+1).(color.Gray).Y)
+	g1 := float32(img.At(x, y-1).(color.Gray).Y) / 257.0
+	g2 := float32(img.At(x, y+1).(color.Gray).Y) / 257.0
 
 	grad := g2 - g1
 
@@ -57,8 +56,8 @@ func (h *HOG) GradX(img image.Image, x, y int) float32 {
 }
 
 func (h *HOG) GradY(img image.Image, x, y int) float32 {
-	g1 := float32(img.At(x-1, y).(color.Gray).Y)
-	g2 := float32(img.At(x+1, y).(color.Gray).Y)
+	g1 := float32(img.At(x-1, y).(color.Gray).Y) / 257.0
+	g2 := float32(img.At(x+1, y).(color.Gray).Y) / 257.0
 
 	grad := g2 - g1
 
@@ -84,19 +83,26 @@ func (h *HOG) AngleWeight(magnitude, degrees float32) (float32, float32, float32
 
 	binSize := float32(20)
 
+	degrees = float32(math.Abs(float64(degrees)))
+	magnitude = float32(math.Abs(float64(magnitude)))
+
 	groupStart = float32(int(degrees/binSize)) * binSize
 	groupEnd = groupStart + binSize
 
 	part1 = ((groupEnd - degrees) / binSize) * magnitude
 	part2 = ((degrees - groupStart) / binSize) * magnitude
 
+	if math.IsNaN(float64(part1)) || math.IsNaN(float64(part2)) {
+		return 0, 0, 0, 0
+	}
+
 	return groupStart / binSize, part1, groupEnd / binSize, part2
 }
 
-func (h *HOG) CalculateGradients(img image.Image) ([][]float32, image.Image, []int) {
+func (h *HOG) CalculateGradients(img image.Image) ([][]float32, image.Image, []float32) {
 	var hog [][]float32
 	var hogImg image.Image
-	hist := []int{0, 0, 0, 0, 0, 0, 0, 0, 0}
+	hist := []float32{0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 	for r := range img.Bounds().Max.Y {
 		for c := range img.Bounds().Max.X {
@@ -104,7 +110,10 @@ func (h *HOG) CalculateGradients(img image.Image) ([][]float32, image.Image, []i
 			gy := h.GradY(img, c, r)
 			mag, _, deg := h.GradOrien(gx, gy)
 
-			fmt.Println(int(mag), int(deg))
+			s, p1, e, p2 := h.AngleWeight(float32(mag), float32(deg))
+
+			hist[int(s)] += p1
+			hist[int(e)] += p2
 		}
 	}
 
