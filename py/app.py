@@ -147,6 +147,9 @@ if __name__ == "__main__":
     print(len(histogram_points_nine[0]))
     print(len(histogram_points_nine[0][0]))
 
+    with open(f"./backups/hist.json", 'w') as f:
+          json.dump(histogram_points_nine, f)
+
     epsilon = 1e-05
 
     feature_vectors = []
