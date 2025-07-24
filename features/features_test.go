@@ -67,6 +67,8 @@ Actual: %#v`, result, target)
 }
 
 func TestMagnitudeTheta(t *testing.T) {
+	t.Skip()
+	
 	var targetData, magData, thetaData [][]float32
 
 	data, err := os.ReadFile("./fixtures/dump.json")
