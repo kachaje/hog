@@ -294,6 +294,29 @@ Actual: %#v`, target, result)
 	_ = targets
 }
 
+func TestCalculateJ(t *testing.T) {
+	f := features.Features{}
+
+	targets := map[float32]float32{
+		89.699551773: 3,
+		88.745362256: 3,
+		69.121575212: 2,
+		46.838597471: 1,
+		24.476863127: 0,
+		14.04109124:  0,
+		69.857194452: 2,
+		40.989482415: 1,
+	}
+
+	for angle, value := range targets {
+		result := f.CalculateJ(angle)
+
+		if result != value {
+			t.Fatalf("Test failed. Expected: %v; Actual: %v\n", value, result)
+		}
+	}
+}
+
 func TestHistogramPointsNine(t *testing.T) {
 	var magData, thetaData [][]float32
 
