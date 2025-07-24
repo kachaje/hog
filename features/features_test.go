@@ -200,16 +200,17 @@ func TestArrayToImg(t *testing.T) {
 
 func TestPartition(t *testing.T) {
 	data := [][]float32{
-		{1, 2, 3, 4, 5, 6, 7, 8},
-		{10, 11, 12, 13, 14, 15, 16},
-		{17, 18, 19, 20, 21, 22, 23, 24},
-		{25, 26, 27, 28, 29, 20, 31, 32},
-		{33, 34, 35, 36, 37, 38, 39, 40},
+		{1, 2, 3, 4, 5, 6, 7, 8, 9},
+		{10, 11, 12, 13, 14, 15, 16, 17, 18},
+		{19, 20, 21, 22, 23, 24, 25, 26, 27},
+		{28, 29, 30, 31, 32, 33, 34, 35, 36},
+		{37, 38, 39, 40, 42, 43, 44, 45, 46},
+		{47, 48, 49, 50, 51, 52, 53, 54, 55},
 	}
 	target := [][]float32{
 		{12, 13, 14},
-		{19, 20, 21},
-		{27, 28, 29},
+		{21, 22, 23},
+		{30, 31, 32},
 	}
 
 	step := 3
@@ -231,6 +232,66 @@ Actual: %#v`, target, result)
 			}
 		}
 	}
+
+	targets := [][][]float32{
+		{
+			{1, 2, 3},
+			{10, 11, 12},
+			{19, 20, 21},
+		},
+		{
+			{4, 5, 6},
+			{13, 14, 15},
+			{22, 23, 24},
+		},
+		{
+			{7, 8, 9},
+			{16, 17, 18},
+			{25, 26, 27},
+		},
+		{
+			{28, 29, 30},
+			{37, 38, 39},
+			{47, 48, 49},
+		},
+		{
+			{31, 32, 33},
+			{40, 42, 43},
+			{50, 51, 52},
+		},
+		{
+			{34, 35, 36},
+			{44, 45, 46},
+			{53, 54, 55},
+		},
+	}
+
+	k := 0
+	for i := 0; i < len(data); i += step {
+		for j := 0; j < len(data[0]); j += step {
+			result := f.Partition(data, i, j, step)
+
+			if result == nil {
+				t.Fatal("Test failed")
+			}
+
+			target := targets[k]
+
+			for i := range len(target) {
+				for j := range len(target[0]) {
+					if result[i][j] != target[i][j] {
+						t.Fatalf(`Test failed. 
+Expected: %#v; 
+Actual: %#v`, target, result)
+					}
+				}
+			}
+
+			k++
+		}
+	}
+
+	_ = targets
 }
 
 func TestHistogramPointsNine(t *testing.T) {
