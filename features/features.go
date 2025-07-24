@@ -169,7 +169,12 @@ func (f *Features) BuildBin(magnitudes, angles [][]float32, i, j, step int) []fl
 		for l := range len(magnitudeValues[0]) {
 			valueJ, Vj, Vj_1 := f.BuildRow(magnitudeValues[k][l], angleValues[k][l])
 
-			fmt.Println(valueJ, Vj, Vj_1)
+			if valueJ < 0 {
+				valueJ = step + valueJ
+			}
+
+			bin[valueJ] += Vj
+			bin[valueJ+1] += Vj_1
 		}
 	}
 

@@ -2,7 +2,6 @@ package features_test
 
 import (
 	"encoding/json"
-	"fmt"
 	"image"
 	"math"
 	"os"
@@ -467,9 +466,17 @@ func TestBuildBin(t *testing.T) {
 
 	f := features.Features{}
 
-	bin := f.BuildBin(magData, thetaData, 0, 0, 8)
+	result := f.BuildBin(magData, thetaData, 0, 0, 8)
 
-	fmt.Println(bin)
+	target := []float32{0.002204647, 0.084837094, 0.24354422, 0.10697292, 0.37303597, 0, 0, 0.1487425, 0.36882165}
+
+	for i := range target {
+		r1 := float32(math.Floor(float64(result[i]*1e6)) / 1e6)
+		t1 := float32(math.Floor(float64(target[i]*1e6)) / 1e6)
+		if r1 != t1 {
+			t.Fatalf("Test failed. Expected: %v; Actual: %v", t1, r1)
+		}
+	}
 }
 
 func TestHistogramPointsNine(t *testing.T) {
