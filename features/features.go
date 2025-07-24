@@ -146,8 +146,8 @@ func (f *Features) Partition(data [][]float32, y, x, step int) [][]float32 {
 	return result
 }
 
-func (f *Features) HistogramPointsNine(mag, theta [][]float32) [][]float32 {
-	hist := make([][]float32, 0)
+func (f *Features) HistogramPointsNine(mag, theta [][]float32) [][][]float32 {
+	hist := make([][][]float32, 0)
 
 	step := 8
 	height := len(mag)
@@ -155,24 +155,35 @@ func (f *Features) HistogramPointsNine(mag, theta [][]float32) [][]float32 {
 
 	for i := 0; i < height; i += step {
 		temp := make([][]float32, 0)
-		_ = temp
 
 		for j := 0; j < width; j += step {
+			bins := make([]float32, numberOfBins)
+
 			for k := range step {
 				magnitudeValues := f.Partition(mag, i, j, step)
 				angleValues := f.Partition(theta, i, j, step)
 
-				_ = angleValues
-
 				for l := range len(magnitudeValues[0]) {
-					bins := make([]float32, numberOfBins)
 
-					if false {
-						fmt.Println(i, j, k, l, bins)
+					valueJ := f.CalculateJ(angleValues[k][l])
+
+					vj := f.CalculateValueJ(magnitudeValues[k][l], angleValues[k][l], valueJ)
+
+					vj1 := magnitudeValues[k][l] - vj
+
+					if valueJ <= 0 {
+						continue
 					}
+
+					bins[int(valueJ)] += vj
+					bins[int(valueJ+1)] += vj1
 				}
 			}
+
+			temp = append(temp, bins)
 		}
+
+		hist = append(hist, temp)
 	}
 
 	return hist

@@ -2,7 +2,6 @@ package features_test
 
 import (
 	"encoding/json"
-	"fmt"
 	"image"
 	"os"
 	"path/filepath"
@@ -413,7 +412,21 @@ func TestHistogramPointsNine(t *testing.T) {
 
 	hist := f.HistogramPointsNine(magData, thetaData)
 
+	if len(hist) != 16 {
+		t.Fatalf("Test failed. Expected: 16; Actual: %v", len(hist))
+	}
+
+	if len(hist[0]) != 8 {
+		t.Fatalf("Test failed. Expected: 8; Actual: %v", len(hist[0]))
+	}
+
+	if len(hist[0][0]) != 9 {
+		t.Fatalf("Test failed. Expected: 9; Actual: %v", len(hist[0][0]))
+	}
+
 	if false {
-		fmt.Println(hist)
+		payload, _ := json.Marshal(hist)
+
+		os.WriteFile("./fixtures/hist.json", payload, 0644)
 	}
 }
