@@ -9,6 +9,7 @@ from skimage.feature import hog
 import numpy as np
 import sys
 import signal
+import json
      
 number_of_bins = 9
 step_size = 180 / number_of_bins
@@ -113,10 +114,17 @@ if __name__ == "__main__":
             value_j = calculate_j(angle_values[k][l])
             Vj = calculate_value_j(magnitude_values[k][l], angle_values[k][l], value_j)
             Vj_1 = magnitude_values[k][l] - Vj
+
+            with open(f"./backups/points/{j}_{i}_{l}_{k}.json", 'w') as f:
+              json.dump({"i":i, "j": j, "k": k, "l": l, "value_j": value_j, "Vj": Vj, "Vj_1": Vj_1, "magnitude": magnitude_values[k][l], "angle": angle_values[k][l]}, f, indent=4)
+
             bins[value_j]+=Vj
             bins[value_j+1]+=Vj_1
             bins = [round(x, 9) for x in bins]
         temp.append(bins)
+        with open(f"./backups/bins/{j}_{i}.json", 'w') as f:
+              json.dump(bins, f, indent=4)
+
       histogram_points_nine.append(temp)
 
     axes[1, 0].bar(x=np.arange(9), height=histogram_points_nine[0][0], align="center", width=0.8)
