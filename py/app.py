@@ -177,6 +177,9 @@ if __name__ == "__main__":
 
     print(f'Number of HOG features = {len(feature_vectors) * len(feature_vectors[0]) * len(feature_vectors[0][0])}')
 
+    with open(f"./backups/features.json", 'w') as f:
+          json.dump(feature_vectors, f)
+
 
     # axes[1, 1].set_visible(False)
 
