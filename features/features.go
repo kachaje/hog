@@ -204,3 +204,22 @@ func (f *Features) HistogramPointsNine(magnitudes, angles [][]float32) [][][]flo
 
 	return hist
 }
+
+func (f *Features) CreateFeatures(hist [][][]float32) [][][]float32 {
+	features := [][][]float32{}
+	epsilon := 1e-05
+
+	_ = epsilon
+
+	for i := range len(hist) - 1 {
+		temp := []float32{}
+
+		_ = temp
+
+		for j := range len(hist[0]) - 1 {
+			fmt.Println(i, j)
+		}
+	}
+
+	return features
+}

@@ -2,6 +2,7 @@ package features_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"image"
 	"math"
 	"os"
@@ -545,4 +546,24 @@ func TestHistogramPointsNine(t *testing.T) {
 			}
 		}
 	}
+}
+
+func TestCreateFeatures(t *testing.T) {
+	f := features.Features{}
+
+	var target [][][]float32
+
+	data, err := os.ReadFile("./fixtures/hist.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = json.Unmarshal(data, &target)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	result := f.CreateFeatures(target)
+
+	fmt.Println(result)
 }

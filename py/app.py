@@ -157,13 +157,25 @@ if __name__ == "__main__":
       temp = []
       for j in range(0, len(histogram_points_nine[0]) - 1, 1):
         values = [[histogram_points_nine[i][x] for x in range(j, j+2)] for i in range(i, i+2)]
+
+        with open(f"./backups/features/values_{i}_{j}.json", 'w') as f:
+              json.dump(values, f)
+
         final_vector = []
         for k in values:
           for l in k:
             for m in l:
               final_vector.append(m)
+
+        with open(f"./backups/features/vector_round_1_{i}_{j}.json", 'w') as f:
+              json.dump(final_vector, f)
+
         k = round(math.sqrt(sum([pow(x, 2) for x in final_vector])), 9)
         final_vector = [round(x/(k + epsilon), 9) for x in final_vector]
+
+        with open(f"./backups/features/vector_round_2_{i}_{j}.json", 'w') as f:
+              json.dump(final_vector, f)
+
         temp.append(final_vector)
       feature_vectors.append(temp)
 
