@@ -147,17 +147,11 @@ func (f *Features) HistogramPointsNine(mag, theta [][]float32) [][]float32 {
 		_ = temp
 
 		for j := 0; j < width; j += step {
-			magnitudeValues := make([][]float32, step)
-			angleValues := make([][]float32, step)
+			for k := range step {
+				magnitudeValues := f.Partition(mag, i, j, step)
+				angleValues := f.Partition(theta, i, j, step)
 
-			_ = angleValues
-
-			for k := range len(magnitudeValues) {
-				magnitudeValues = f.Partition(mag, i, j+k, step)
-				angleValues = f.Partition(theta, i, j+k, step)
-
-				fmt.Println(magnitudeValues)
-				fmt.Println(angleValues)
+				_ = angleValues
 
 				for l := range len(magnitudeValues[0]) {
 					bins := make([]float32, numberOfBins)
