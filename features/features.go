@@ -89,7 +89,12 @@ func (f *Features) MagnitudeTheta(img [][]float32) ([][]float32, [][]float32) {
 	return mag, theta
 }
 
-func (f *Features) ArrayToImg(data [][]float32) (image.Image, error) {
+func (f *Features) ArrayToImg(data [][]float32, divisor *float32) (image.Image, error) {
+	factor := float32(257.0)
+	if divisor != nil {
+		factor = *divisor
+	}
+
 	height := len(data)
 	if height == 0 {
 		return nil, fmt.Errorf("pixel data is empty")
@@ -103,7 +108,7 @@ func (f *Features) ArrayToImg(data [][]float32) (image.Image, error) {
 
 	for y := range height {
 		for x := range width {
-			value := uint8(data[y][x])
+			value := uint8(data[y][x] * factor)
 
 			c := color.Gray{value}
 

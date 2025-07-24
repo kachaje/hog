@@ -69,7 +69,7 @@ Actual: %#v`, result, target)
 func TestMagnitudeTheta(t *testing.T) {
 	var targetData, magData, thetaData [][]float32
 
-	data, err := os.ReadFile("../data/dump.json")
+	data, err := os.ReadFile("./fixtures/dump.json")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -167,10 +167,12 @@ func TestArrayToImg(t *testing.T) {
 	defer func() {
 		magFile.Close()
 
-		os.Remove(magFilename)
+		if false {
+			os.Remove(magFilename)
+		}
 	}()
 
-	magImg, err := f.ArrayToImg(magData)
+	magImg, err := f.ArrayToImg(magData, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -186,10 +188,13 @@ func TestArrayToImg(t *testing.T) {
 	defer func() {
 		magFile.Close()
 
-		os.Remove(thetaFilename)
+		if false {
+			os.Remove(thetaFilename)
+		}
 	}()
 
-	thetaImg, err := f.ArrayToImg(thetaData)
+	factor := float32(math.Pi * 257.0 / 180)
+	thetaImg, err := f.ArrayToImg(thetaData, &factor)
 	if err != nil {
 		t.Fatal(err)
 	}
