@@ -324,7 +324,7 @@ func TestCalculateCJ(t *testing.T) {
 		4: 90.0,
 		3: 70.0,
 		2: 50.0,
-		1: 30.000002,
+		1: 30.0,
 		0: 10.0,
 	}
 
@@ -338,10 +338,52 @@ func TestCalculateCJ(t *testing.T) {
 }
 
 func TestCalculateValueJ(t *testing.T) {
-	targets := map[float32]map[string]float32{
-		0.002121697: {"angle": 40.989482415, "j": 0.000955879, "vj": 1}, 0.005973429: {"angle": 51.403386204, "j": 0.005554278, "vj": 2}, 0.034484309: {"angle": 24.476863127, "j": 0.009523078, "vj": 0}, 0.029104762: {"angle": 88.216660375, "j": 0.002595184, "vj": 3}, 0.029155932: {"angle": 88.555655828, "j": 0.00210556, "vj": 3}, 0.0305682: {"angle": 83.918670745, "j": 0.009294764, "vj": 3}, 0.032742355: {"angle": 83.564826236, "j": 0.010535137, "vj": 3}, 0.032987132: {"angle": 89.699551773, "j": 0.000495546, "vj": 3}, 0.03223796: {"angle": 88.745362256, "j": 0.002022348, "vj": 3}, 0.03359077: {"angle": 69.121575212, "j": 0.001475348, "vj": 2}, 0.049294209: {"angle": 46.838597471, "j": 0.007791942, "vj": 1}}
+	f := features.Features{}
 
-	_ = targets
+	targets := map[float32]map[string]float32{
+		0.002121697: {
+			"angle": 40.989482415, "Vj": 0.00095587934, "valueJ": 1,
+		},
+		0.005973429: {
+			"angle": 51.403386204, "Vj": 0.005554278, "valueJ": 2,
+		},
+		0.034484309: {
+			"angle": 24.476863127, "Vj": 0.009523077, "valueJ": 0,
+		},
+		0.029104762: {
+			"angle": 88.216660375, "Vj": 0.0025951848, "valueJ": 3,
+		},
+		0.029155932: {
+			"angle": 88.555655828, "Vj": 0.0021055592, "valueJ": 3,
+		},
+		0.0305682: {
+			"angle": 83.918670745, "Vj": 0.009294765, "valueJ": 3,
+		},
+		0.032742355: {
+			"angle": 83.564826236, "Vj": 0.010535136, "valueJ": 3,
+		},
+		0.03223796: {
+			"angle": 88.745362256, "Vj": 0.0020223495, "valueJ": 3,
+		},
+		0.03359077: {
+			"angle": 69.121575212, "Vj": 0.0014753497, "valueJ": 2,
+		},
+		0.049294209: {
+			"angle": 46.838597471, "Vj": 0.007791944, "valueJ": 1,
+		},
+	}
+
+	for magnitude, row := range targets {
+		angle := row["angle"]
+		vj := row["Vj"]
+		valueJ := row["valueJ"]
+
+		result := f.CalculateValueJ(magnitude, angle, valueJ)
+
+		if result != vj {
+			t.Fatalf("Test failed on %v. Expected: %v; Actual: %v\n", magnitude, vj, result)
+		}
+	}
 }
 
 func TestHistogramPointsNine(t *testing.T) {

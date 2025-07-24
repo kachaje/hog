@@ -123,9 +123,14 @@ func (f *Features) CalculateJ(angle float32) float32 {
 }
 
 func (f *Features) CalculateCJ(j float32) float32 {
-	cj := float32(stepSize) * (j + 0.5)
+	return float32(stepSize) * (j + 0.5)
+}
 
-	return float32(math.Round(float64(cj))*1e9) / 1e9
+func (f *Features) CalculateValueJ(magnitude, angle, j float32) float32 {
+	Cj := f.CalculateCJ(j + 1)
+	Vj := magnitude * ((Cj - angle) / float32(stepSize))
+
+	return Vj
 }
 
 func (f *Features) Partition(data [][]float32, y, x, step int) [][]float32 {
