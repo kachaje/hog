@@ -2,6 +2,7 @@ package features_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"image"
 	"math"
 	"os"
@@ -40,7 +41,7 @@ func TestImgToArray(t *testing.T) {
 
 	var target [][]float32
 
-	data, err := os.ReadFile("../data/dump.json")
+	data, err := os.ReadFile("./fixtures/dump.json")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -428,6 +429,36 @@ func TestBuildRow(t *testing.T) {
 			t.Fatalf("Test failed. Expected: %v; Actual: %v", targetVj_1, Vj_1)
 		}
 	}
+}
+
+func TestBuildBin(t *testing.T) {
+	var magData, thetaData [][]float32
+
+	data, err := os.ReadFile("./fixtures/magnitudes.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = json.Unmarshal(data, &magData)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	data, err = os.ReadFile("./fixtures/thetas.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = json.Unmarshal(data, &thetaData)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	f := features.Features{}
+
+	bin := f.BuildBin(magData, thetaData, 0, 0, 8)
+
+	fmt.Println(bin)
 }
 
 func TestHistogramPointsNine(t *testing.T) {

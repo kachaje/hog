@@ -52,6 +52,9 @@ if __name__ == "__main__":
 
     img = np.array(img)
 
+    with open(f"./backups/dump.json", 'w') as f:
+      json.dump(img.tolist(), f, indent=4)
+
     mag = []
     theta = []
     for i in range(128):

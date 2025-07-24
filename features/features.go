@@ -24,7 +24,7 @@ func (f *Features) ImgToArray(img image.Gray) [][]float32 {
 		pixelArray[y] = make([]float32, width)
 
 		for x := range width {
-			pixelArray[y][x] = float32(img.At(x, y).(color.Gray).Y)
+			pixelArray[y][x] = float32(img.At(x, y).(color.Gray).Y) / 257.0
 		}
 	}
 
@@ -154,8 +154,19 @@ func (f *Features) BuildRow(magnitude, angle float32) (float32, float32) {
 	return Vj, Vj_1
 }
 
-func (f *Features) LoadBin(magnitudes, thetas [][]float32, i, j int) []float32 {
+func (f *Features) BuildBin(magnitudes, angles [][]float32, i, j, step int) []float32 {
 	bin := make([]float32, 0)
+
+	magnitudeValues := f.Partition(magnitudes, i, j, step)
+	angleValues := f.Partition(angles, i, j, step)
+
+	for k := range len(magnitudeValues) {
+		for l := range len(magnitudeValues[0]) {
+			Vj, Vj_1 := f.BuildRow(magnitudeValues[k][l], angleValues[k][l])
+
+			fmt.Println(Vj, Vj_1)
+		}
+	}
 
 	return bin
 }
