@@ -122,6 +122,12 @@ func (f *Features) CalculateJ(angle float32) float32 {
 	return float32(j)
 }
 
+func (f *Features) CalculateCJ(j float32) float32 {
+	cj := float32(stepSize) * (j + 0.5)
+
+	return float32(math.Round(float64(cj))*1e9) / 1e9
+}
+
 func (f *Features) Partition(data [][]float32, y, x, step int) [][]float32 {
 	result := make([][]float32, step)
 
@@ -156,7 +162,9 @@ func (f *Features) HistogramPointsNine(mag, theta [][]float32) [][]float32 {
 				for l := range len(magnitudeValues[0]) {
 					bins := make([]float32, numberOfBins)
 
-					fmt.Println(i, j, k, l, bins)
+					if false {
+						fmt.Println(i, j, k, l, bins)
+					}
 				}
 			}
 		}

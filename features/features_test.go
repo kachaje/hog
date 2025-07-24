@@ -317,6 +317,33 @@ func TestCalculateJ(t *testing.T) {
 	}
 }
 
+func TestCalculateCJ(t *testing.T) {
+	f := features.Features{}
+
+	targets := map[float32]float32{
+		4: 90.0,
+		3: 70.0,
+		2: 50.0,
+		1: 30.000002,
+		0: 10.0,
+	}
+
+	for j, value := range targets {
+		result := f.CalculateCJ(j)
+
+		if result != value {
+			t.Fatalf("Test failed. Expected: %v; Actual: %v\n", value, result)
+		}
+	}
+}
+
+func TestCalculateValueJ(t *testing.T) {
+	targets := map[float32]map[string]float32{
+		0.002121697: {"angle": 40.989482415, "j": 0.000955879, "vj": 1}, 0.005973429: {"angle": 51.403386204, "j": 0.005554278, "vj": 2}, 0.034484309: {"angle": 24.476863127, "j": 0.009523078, "vj": 0}, 0.029104762: {"angle": 88.216660375, "j": 0.002595184, "vj": 3}, 0.029155932: {"angle": 88.555655828, "j": 0.00210556, "vj": 3}, 0.0305682: {"angle": 83.918670745, "j": 0.009294764, "vj": 3}, 0.032742355: {"angle": 83.564826236, "j": 0.010535137, "vj": 3}, 0.032987132: {"angle": 89.699551773, "j": 0.000495546, "vj": 3}, 0.03223796: {"angle": 88.745362256, "j": 0.002022348, "vj": 3}, 0.03359077: {"angle": 69.121575212, "j": 0.001475348, "vj": 2}, 0.049294209: {"angle": 46.838597471, "j": 0.007791942, "vj": 1}}
+
+	_ = targets
+}
+
 func TestHistogramPointsNine(t *testing.T) {
 	var magData, thetaData [][]float32
 
@@ -344,5 +371,7 @@ func TestHistogramPointsNine(t *testing.T) {
 
 	hist := f.HistogramPointsNine(magData, thetaData)
 
-	fmt.Println(hist)
+	if false {
+		fmt.Println(hist)
+	}
 }
