@@ -91,6 +91,12 @@ if __name__ == "__main__":
       mag.append(magnitudeArray)
       theta.append(angleArray)
 
+    with open(f"./backups/magnitudes.json", 'w') as f:
+      json.dump(mag, f, indent=4)
+
+    with open(f"./backups/angles.json", 'w') as f:
+      json.dump(theta, f, indent=4)
+
     mag = np.array(mag)
     theta = np.array(theta)
 
