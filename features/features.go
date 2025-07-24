@@ -181,39 +181,18 @@ func (f *Features) BuildBin(magnitudes, angles [][]float32, i, j, step int) []fl
 	return bin
 }
 
-func (f *Features) HistogramPointsNine(mag, theta [][]float32) [][][]float32 {
+func (f *Features) HistogramPointsNine(magnitudes, angles [][]float32) [][][]float32 {
 	hist := make([][][]float32, 0)
 
 	step := 8
-	height := len(mag)
-	width := len(mag[0])
+	height := len(magnitudes)
+	width := len(magnitudes[0])
 
 	for i := 0; i < height; i += step {
 		temp := make([][]float32, 0)
 
 		for j := 0; j < width; j += step {
-			bins := make([]float32, numberOfBins)
-
-			for k := range step {
-				magnitudeValues := f.Partition(mag, i, j, step)
-				angleValues := f.Partition(theta, i, j, step)
-
-				for l := range len(magnitudeValues[0]) {
-
-					valueJ := f.CalculateJ(angleValues[k][l])
-
-					vj := f.CalculateValueJ(magnitudeValues[k][l], angleValues[k][l], valueJ)
-
-					vj1 := magnitudeValues[k][l] - vj
-
-					if valueJ <= 0 {
-						continue
-					}
-
-					bins[int(valueJ)] += vj
-					bins[int(valueJ+1)] += vj1
-				}
-			}
+			bins := f.BuildBin(magnitudes, angles, i, j, step)
 
 			temp = append(temp, bins)
 		}

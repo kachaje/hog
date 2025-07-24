@@ -168,9 +168,7 @@ func TestArrayToImg(t *testing.T) {
 	defer func() {
 		magFile.Close()
 
-		if false {
-			os.Remove(magFilename)
-		}
+		os.Remove(magFilename)
 	}()
 
 	magImg, err := f.ArrayToImg(magData, nil)
@@ -189,9 +187,7 @@ func TestArrayToImg(t *testing.T) {
 	defer func() {
 		magFile.Close()
 
-		if false {
-			os.Remove(thetaFilename)
-		}
+		os.Remove(thetaFilename)
 	}()
 
 	factor := float32(math.Pi * 257.0 / 180)
@@ -518,9 +514,7 @@ func TestHistogramPointsNine(t *testing.T) {
 		t.Fatalf("Test failed. Expected: 9; Actual: %v", len(hist[0][0]))
 	}
 
-	if false {
-		payload, _ := json.Marshal(hist)
+	payload, _ := json.Marshal(hist)
 
-		os.WriteFile("./fixtures/hist.json", payload, 0644)
-	}
+	os.WriteFile("./fixtures/hist.json", payload, 0644)
 }
