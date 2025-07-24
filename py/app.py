@@ -130,9 +130,14 @@ if __name__ == "__main__":
             bins[value_j]+=Vj
             bins[value_j+1]+=Vj_1
             bins = [round(x, 9) for x in bins]
+
         temp.append(bins)
+
         with open(f"./backups/bins/{j}_{i}.json", 'w') as f:
               json.dump(bins, f, indent=4)
+
+      with open(f"./backups/bins/temp_{i}.json", 'w') as f:
+            json.dump(temp, f)
 
       histogram_points_nine.append(temp)
 
