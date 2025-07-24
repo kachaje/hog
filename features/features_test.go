@@ -3,6 +3,7 @@ package features_test
 import (
 	"encoding/json"
 	"image"
+	"math"
 	"os"
 	"path/filepath"
 	"testing"
@@ -381,6 +382,50 @@ func TestCalculateValueJ(t *testing.T) {
 
 		if result != vj {
 			t.Fatalf("Test failed on %v. Expected: %v; Actual: %v\n", magnitude, vj, result)
+		}
+	}
+}
+
+func TestBuildRow(t *testing.T) {
+	f := features.Features{}
+
+	files, err := os.ReadDir("./fixtures/data/points")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, file := range files {
+		if file.IsDir() {
+			continue
+		}
+
+		content, err := os.ReadFile(filepath.Join(".", "fixtures", "data", "points", file.Name()))
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		var data map[string]float32
+
+		err = json.Unmarshal(content, &data)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		magnitude, angle, targetVj, targetVj_1 := data["magnitude"], data["angle"], data["Vj"], data["Vj_1"]
+
+		Vj, Vj_1 := f.BuildRow(magnitude, angle)
+
+		Vj = float32(math.Floor(float64(Vj*1e6)) / 1e6)
+		targetVj = float32(math.Floor(float64(targetVj*1e6)) / 1e6)
+
+		Vj_1 = float32(math.Floor(float64(Vj_1*1e6)) / 1e6)
+		targetVj_1 = float32(math.Floor(float64(targetVj_1*1e6)) / 1e6)
+
+		if Vj != targetVj {
+			t.Fatalf("Test failed. Expected: %v; Actual: %v", targetVj, Vj)
+		}
+		if Vj_1 != float32(targetVj_1) {
+			t.Fatalf("Test failed. Expected: %v; Actual: %v", targetVj_1, Vj_1)
 		}
 	}
 }

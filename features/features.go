@@ -146,6 +146,20 @@ func (f *Features) Partition(data [][]float32, y, x, step int) [][]float32 {
 	return result
 }
 
+func (f *Features) BuildRow(magnitude, angle float32) (float32, float32) {
+	valueJ := f.CalculateJ(angle)
+	Vj := f.CalculateValueJ(magnitude, angle, valueJ)
+	Vj_1 := magnitude - Vj
+
+	return Vj, Vj_1
+}
+
+func (f *Features) LoadBin(magnitudes, thetas [][]float32, i, j int) []float32 {
+	bin := make([]float32, 0)
+
+	return bin
+}
+
 func (f *Features) HistogramPointsNine(mag, theta [][]float32) [][][]float32 {
 	hist := make([][][]float32, 0)
 
