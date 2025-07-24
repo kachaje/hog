@@ -151,25 +151,25 @@ func (f *Features) Partition(data [][]float32, y, x, step int) [][]float32 {
 	return result
 }
 
-func (f *Features) BuildRow(magnitude, angle float32) (float32, float32) {
+func (f *Features) BuildRow(magnitude, angle float32) (int, float32, float32) {
 	valueJ := f.CalculateJ(angle)
 	Vj := f.CalculateValueJ(magnitude, angle, valueJ)
 	Vj_1 := magnitude - Vj
 
-	return Vj, Vj_1
+	return int(valueJ), Vj, Vj_1
 }
 
 func (f *Features) BuildBin(magnitudes, angles [][]float32, i, j, step int) []float32 {
-	bin := make([]float32, 0)
+	bin := make([]float32, numberOfBins)
 
 	magnitudeValues := f.Partition(magnitudes, i, j, step)
 	angleValues := f.Partition(angles, i, j, step)
 
 	for k := range len(magnitudeValues) {
 		for l := range len(magnitudeValues[0]) {
-			Vj, Vj_1 := f.BuildRow(magnitudeValues[k][l], angleValues[k][l])
+			valueJ, Vj, Vj_1 := f.BuildRow(magnitudeValues[k][l], angleValues[k][l])
 
-			fmt.Println(Vj, Vj_1)
+			fmt.Println(valueJ, Vj, Vj_1)
 		}
 	}
 

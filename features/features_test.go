@@ -68,7 +68,7 @@ Actual: %#v`, result, target)
 
 func TestMagnitudeTheta(t *testing.T) {
 	t.Skip()
-	
+
 	var targetData, magData, thetaData [][]float32
 
 	data, err := os.ReadFile("./fixtures/dump.json")
@@ -419,9 +419,9 @@ func TestBuildRow(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		magnitude, angle, targetVj, targetVj_1 := data["magnitude"], data["angle"], data["Vj"], data["Vj_1"]
+		magnitude, angle, targetVj, targetVj_1, targetValueJ := data["magnitude"], data["angle"], data["Vj"], data["Vj_1"], data["value_j"]
 
-		Vj, Vj_1 := f.BuildRow(magnitude, angle)
+		valueJ, Vj, Vj_1 := f.BuildRow(magnitude, angle)
 
 		Vj = float32(math.Floor(float64(Vj*1e6)) / 1e6)
 		targetVj = float32(math.Floor(float64(targetVj*1e6)) / 1e6)
@@ -434,6 +434,10 @@ func TestBuildRow(t *testing.T) {
 		}
 		if Vj_1 != float32(targetVj_1) {
 			t.Fatalf("Test failed. Expected: %v; Actual: %v", targetVj_1, Vj_1)
+		}
+
+		if int(targetValueJ) != valueJ {
+			t.Fatalf("Test failed. Expected: %v; Actual: %v", targetValueJ, valueJ)
 		}
 	}
 }
