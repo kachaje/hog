@@ -464,7 +464,17 @@ func TestBuildBin(t *testing.T) {
 
 	result := f.BuildBin(magData, thetaData, 0, 0, 8)
 
-	target := []float32{0.002204647, 0.084837094, 0.24354422, 0.10697292, 0.37303597, 0, 0, 0.1487425, 0.36882165}
+	target := []float32{}
+
+	data, err = os.ReadFile("./fixtures/data/bin0.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = json.Unmarshal(data, &target)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	for i := range target {
 		r1 := float32(math.Floor(float64(result[i]*1e6)) / 1e6)

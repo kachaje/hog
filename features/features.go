@@ -160,13 +160,15 @@ func (f *Features) BuildRow(magnitude, angle float32) (int, float32, float32) {
 }
 
 func (f *Features) BuildBin(magnitudes, angles [][]float32, i, j, step int) []float32 {
-	bin := make([]float32, numberOfBins)
+	var bin []float32
 
 	magnitudeValues := f.Partition(magnitudes, i, j, step)
 	angleValues := f.Partition(angles, i, j, step)
 
 	for k := range len(magnitudeValues) {
 		for l := range len(magnitudeValues[0]) {
+			bin = make([]float32, numberOfBins)
+
 			valueJ, Vj, Vj_1 := f.BuildRow(magnitudeValues[k][l], angleValues[k][l])
 
 			if valueJ < 0 {
