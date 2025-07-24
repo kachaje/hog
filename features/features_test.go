@@ -514,7 +514,25 @@ func TestHistogramPointsNine(t *testing.T) {
 		t.Fatalf("Test failed. Expected: 9; Actual: %v", len(hist[0][0]))
 	}
 
-	payload, _ := json.Marshal(hist)
+	var target [][][]float32
 
-	os.WriteFile("./fixtures/hist.json", payload, 0644)
+	data, err = os.ReadFile("./fixtures/hist.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = json.Unmarshal(data, &target)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for i := range len(target) {
+		for j := range len(target[0]) {
+			for k := range len(target[0][0]) {
+				if hist[i][j][k] != target[i][j][k] {
+					t.Fatalf("Test failed. Expected: %v; Actual: %v", target[i][j][k], hist[i][j][k])
+				}
+			}
+		}
+	}
 }
