@@ -313,9 +313,36 @@ func (f *HOG) CreateFeatures(hist [][][]float32) [][][]float32 {
 	return featureVectors
 }
 
-func (f *HOG) HOG(img image.Image, debug bool) (image.Image, [][][]float32, error) {
+func (h *HOG) FlattenArray(data any) []float32 {
+	result := make([]float32, 0)
+
+	switch v := data.(type) {
+	case [][][][]float32:
+		for _, elem := range v {
+			result = append(result, h.FlattenArray(elem)...)
+		}
+	case [][][]float32:
+		for _, elem := range v {
+			result = append(result, h.FlattenArray(elem)...)
+		}
+	case [][]float32:
+		for _, elem := range v {
+			result = append(result, h.FlattenArray(elem)...)
+		}
+	case []float32:
+		for _, elem := range v {
+			result = append(result, h.FlattenArray(elem)...)
+		}
+	case float32:
+		result = append(result, v)
+	}
+
+	return result
+}
+
+func (f *HOG) HOG(img image.Image, debug bool) (image.Image, []float32, error) {
 	var hogImg image.Image
-	var features [][][]float32
+	var features []float32
 
 	resizedImg := f.Resize(img, 64, 128)
 
@@ -383,7 +410,7 @@ func (f *HOG) HOG(img image.Image, debug bool) (image.Image, [][][]float32, erro
 		os.WriteFile("outputHist.json", payload, 0644)
 	}
 
-	features = f.CreateFeatures(histogram)
+	features = f.FlattenArray(f.CreateFeatures(histogram))
 
 	if debug {
 		payload, _ := json.MarshalIndent(features, "", "  ")

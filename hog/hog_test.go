@@ -856,4 +856,40 @@ func TestHOG(t *testing.T) {
 	if hogImg == nil || features == nil {
 		t.Fatal("Test failed")
 	}
+
+	target := 3780
+
+	result := len(features)
+
+	if result != target {
+		t.Fatalf("Test failed. Expected: %v; Actual: %v", target, result)
+	}
+}
+
+func TestFlattenArray(t *testing.T) {
+	h := hog.NewHOG(nil, nil)
+
+	data := [][][][]float32{
+		{
+			{
+				{
+					1, 2, 3, 4, 5,
+				},
+				{
+					6, 7, 8, 9, 10,
+				},
+				{11, 12, 13, 14, 15, 16},
+			},
+		},
+	}
+
+	target := []float32{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}
+
+	result := h.FlattenArray(data)
+
+	for i := range target {
+		if target[i] != result[i] {
+			t.Fatalf("Test failed. Expected: %v; Actual: %v", target[i], result[i])
+		}
+	}
 }
