@@ -31,7 +31,7 @@ func TestImgToGray(t *testing.T) {
 
 	grayImg := f.ImgToGray(img)
 
-	filename := "outputGray.png"
+	filename := "outputGray.jpg"
 
 	outputFile, err := os.Create(filename)
 	if err != nil {
