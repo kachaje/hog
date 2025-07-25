@@ -222,21 +222,40 @@ func (f *Features) FetchHistValues(hist [][][]float32, i, j int) [][][]float32 {
 	return values
 }
 
+func (f *Features) CalculateK(finalVector []float32) float32 {
+	var k float64
+
+	for _, x := range finalVector {
+		k += math.Pow(float64(x), 2)
+	}
+
+	k = math.Sqrt(k)
+
+	return float32(k)
+}
+
 func (f *Features) CreateFeatures(hist [][][]float32) [][][]float32 {
-	features := [][][]float32{}
+	featureVectors := [][][]float32{}
 	epsilon := 1e-05
 
 	_ = epsilon
 
 	for i := range len(hist) - 1 {
-		temp := []float32{}
-
-		_ = temp
-
+		temp := [][]float32{}
 		for j := range len(hist[0]) - 1 {
-			fmt.Println(i, j)
+			values := f.FetchHistValues(hist, i, j)
+
+			finalVector := []float32{}
+			for _, k := range values {
+				for _, l := range k {
+					finalVector = append(finalVector, l...)
+				}
+			}
+
+			temp = append(temp, finalVector)
 		}
+		featureVectors = append(featureVectors, temp)
 	}
 
-	return features
+	return featureVectors
 }
