@@ -767,3 +767,24 @@ Actual: %v`, features[i][j], featureVectors[i][j])
 		}
 	}
 }
+
+func TestHOG(t *testing.T) {
+	f := hog.NewHOG(nil, nil)
+
+	reader, err := os.Open(filepath.Join("..", "data", "flower.jpg"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer reader.Close()
+
+	img, _, err := image.Decode(reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	hogImg, features := f.HOG(img, true)
+
+	if hogImg == nil || features == nil {
+		t.Fatal("Test failed")
+	}
+}

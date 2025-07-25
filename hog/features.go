@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"image/jpeg"
+	"log"
 	"math"
+	"os"
 
 	"golang.org/x/image/draw"
 )
@@ -252,9 +255,47 @@ func (f *HOG) CreateFeatures(hist [][][]float32) [][][]float32 {
 	return featureVectors
 }
 
-func (f *HOG) HOG(img image.Image) (image.Image, [][][]float32) {
+func (f *HOG) HOG(img image.Image, debug bool) (image.Image, [][][]float32) {
 	var hogImg image.Image
 	var features [][][]float32
+
+	resizedImg := f.Resize(img, 64, 128)
+
+	if debug {
+		filename := "outputResized.jpg"
+
+		outputFile, err := os.Create(filename)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer func() {
+			outputFile.Close()
+		}()
+
+		err = jpeg.Encode(outputFile, resizedImg, nil)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	grayImg := f.ImgToGray(resizedImg)
+
+	if debug {
+		filename := "outputGray.jpg"
+
+		outputFile, err := os.Create(filename)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer func() {
+			outputFile.Close()
+		}()
+
+		err = jpeg.Encode(outputFile, grayImg, nil)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 
 	return hogImg, features
 }
