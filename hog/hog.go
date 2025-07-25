@@ -6,7 +6,6 @@ import (
 	"image"
 	"image/color"
 	"image/jpeg"
-	"log"
 	"math"
 	"os"
 
@@ -314,7 +313,7 @@ func (f *HOG) CreateFeatures(hist [][][]float32) [][][]float32 {
 	return featureVectors
 }
 
-func (f *HOG) HOG(img image.Image, debug bool) (image.Image, [][][]float32) {
+func (f *HOG) HOG(img image.Image, debug bool) (image.Image, [][][]float32, error) {
 	var hogImg image.Image
 	var features [][][]float32
 
@@ -325,7 +324,7 @@ func (f *HOG) HOG(img image.Image, debug bool) (image.Image, [][][]float32) {
 
 		outputFile, err := os.Create(filename)
 		if err != nil {
-			log.Fatal(err)
+			return nil, nil, err
 		}
 		defer func() {
 			outputFile.Close()
@@ -333,7 +332,7 @@ func (f *HOG) HOG(img image.Image, debug bool) (image.Image, [][][]float32) {
 
 		err = jpeg.Encode(outputFile, resizedImg, nil)
 		if err != nil {
-			log.Fatal(err)
+			return nil, nil, err
 		}
 	}
 
@@ -344,7 +343,7 @@ func (f *HOG) HOG(img image.Image, debug bool) (image.Image, [][][]float32) {
 
 		outputFile, err := os.Create(filename)
 		if err != nil {
-			log.Fatal(err)
+			return nil, nil, err
 		}
 		defer func() {
 			outputFile.Close()
@@ -352,7 +351,7 @@ func (f *HOG) HOG(img image.Image, debug bool) (image.Image, [][][]float32) {
 
 		err = jpeg.Encode(outputFile, grayImg, nil)
 		if err != nil {
-			log.Fatal(err)
+			return nil, nil, err
 		}
 	}
 
@@ -384,5 +383,35 @@ func (f *HOG) HOG(img image.Image, debug bool) (image.Image, [][][]float32) {
 		os.WriteFile("outputHist.json", payload, 0644)
 	}
 
-	return hogImg, features
+	features = f.CreateFeatures(histogram)
+
+	if debug {
+		payload, _ := json.MarshalIndent(features, "", "  ")
+
+		os.WriteFile("outputFeatures.json", payload, 0644)
+	}
+
+	hogImg, err := f.ArrayToImg(magnitudes, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if debug {
+		filename := "outputHOG.jpg"
+
+		outputFile, err := os.Create(filename)
+		if err != nil {
+			return nil, nil, err
+		}
+		defer func() {
+			outputFile.Close()
+		}()
+
+		err = jpeg.Encode(outputFile, hogImg, nil)
+		if err != nil {
+			return nil, nil, err
+		}
+	}
+
+	return hogImg, features, nil
 }

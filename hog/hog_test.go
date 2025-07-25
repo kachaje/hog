@@ -848,7 +848,10 @@ func TestHOG(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	hogImg, features := f.HOG(img, true)
+	hogImg, features, err := f.HOG(img, false)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	if hogImg == nil || features == nil {
 		t.Fatal("Test failed")
