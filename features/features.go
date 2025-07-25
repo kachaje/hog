@@ -263,6 +263,10 @@ func (f *Features) CreateFeatures(hist [][][]float32) [][][]float32 {
 				}
 			}
 
+			k := f.CalculateK(finalVector)
+
+			finalVector = f.CalculateV2(finalVector, k)
+
 			temp = append(temp, finalVector)
 		}
 		featureVectors = append(featureVectors, temp)

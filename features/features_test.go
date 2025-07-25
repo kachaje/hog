@@ -716,7 +716,7 @@ func TestCalculateV2(t *testing.T) {
 func TestCreateFeatures(t *testing.T) {
 	f := features.Features{}
 
-	var target [][][]float32
+	var target, features [][][]float32
 
 	data, err := os.ReadFile("./fixtures/hist.json")
 	if err != nil {
@@ -728,9 +728,42 @@ func TestCreateFeatures(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	result := f.CreateFeatures(target)
+	data, err = os.ReadFile("./fixtures/features.json")
+	if err != nil {
+		t.Fatal(err)
+	}
 
-	if false {
-		fmt.Println(result)
+	err = json.Unmarshal(data, &features)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	featureVectors := f.CreateFeatures(target)
+
+	if len(featureVectors) != 15 {
+		t.Fatalf("Test failed. Expected: 15; Actual: %v", len(featureVectors))
+	}
+
+	if len(featureVectors[0]) != 7 {
+		t.Fatalf("Test failed. Expected: 7; Actual: %v", len(featureVectors[0]))
+	}
+
+	if len(featureVectors[0][0]) != 36 {
+		t.Fatalf("Test failed. Expected: 36; Actual: %v", len(featureVectors[0][0]))
+	}
+
+	for i := range len(features) {
+		for j := range len(features[0]) {
+			for k := range len(features[0][0]) {
+				fResult := float32(math.Floor(float64(featureVectors[i][j][k]*1e3)) / 1e3)
+				fTarget := float32(math.Floor(float64(features[i][j][k]*1e3)) / 1e3)
+
+				if fResult != fTarget {
+					t.Fatalf(`Test failed. 
+Expected: %v; 
+Actual: %v`, features[i][j], featureVectors[i][j])
+				}
+			}
+		}
 	}
 }
