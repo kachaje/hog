@@ -5,17 +5,52 @@ import (
 	"image"
 	"image/color"
 	"math"
+
+	"golang.org/x/image/draw"
 )
 
-type Features struct{}
+type HOG struct {
+	numberOfBins int
+	stepSize     int
+	epsilon      float64
+}
 
-var (
-	numberOfBins = 9
-	stepSize     = 180 / numberOfBins
-	epsilon      = 1e-05
-)
+func NewHOG(numberOfBins *int, epsilon *float64) *HOG {
+	instance := &HOG{
+		numberOfBins: 9,
+		stepSize:     20,
+		epsilon:      1e-05,
+	}
 
-func (f *Features) ImgToArray(img image.Gray) [][]float32 {
+	if numberOfBins != nil {
+		instance.numberOfBins = *numberOfBins
+		instance.stepSize = 180 / instance.numberOfBins
+	}
+
+	if epsilon != nil {
+		instance.epsilon = *epsilon
+	}
+
+	return instance
+}
+
+func (f *HOG) ImgToGray(img image.Image) *image.Gray {
+	grayImg := image.NewGray(img.Bounds())
+
+	draw.Draw(grayImg, grayImg.Bounds(), img, img.Bounds().Min, draw.Src)
+
+	return grayImg
+}
+
+func (f *HOG) Resize(img image.Image, width, height int) image.Image {
+	newImg := image.NewRGBA(image.Rect(0, 0, width, height))
+
+	draw.NearestNeighbor.Scale(newImg, newImg.Rect, img, img.Bounds(), draw.Over, nil)
+
+	return newImg
+}
+
+func (f *HOG) ImgToArray(img image.Gray) [][]float32 {
 	bounds := img.Bounds()
 	width, height := bounds.Max.X, bounds.Max.Y
 
@@ -32,7 +67,7 @@ func (f *Features) ImgToArray(img image.Gray) [][]float32 {
 	return pixelArray
 }
 
-func (f *Features) ArrayToImg(data [][]float32, divisor *float32) (image.Image, error) {
+func (f *HOG) ArrayToImg(data [][]float32, divisor *float32) (image.Image, error) {
 	factor := float32(257.0)
 	if divisor != nil {
 		factor = *divisor
@@ -62,26 +97,26 @@ func (f *Features) ArrayToImg(data [][]float32, divisor *float32) (image.Image, 
 	return img, nil
 }
 
-func (f *Features) CalculateJ(angle float32) float32 {
-	temp := (angle / float32(stepSize)) - 0.5
+func (f *HOG) CalculateJ(angle float32) float32 {
+	temp := (angle / float32(f.stepSize)) - 0.5
 
 	j := math.Floor(float64(temp))
 
 	return float32(j)
 }
 
-func (f *Features) CalculateCJ(j float32) float32 {
-	return float32(stepSize) * (j + 0.5)
+func (f *HOG) CalculateCJ(j float32) float32 {
+	return float32(f.stepSize) * (j + 0.5)
 }
 
-func (f *Features) CalculateValueJ(magnitude, angle, j float32) float32 {
+func (f *HOG) CalculateValueJ(magnitude, angle, j float32) float32 {
 	Cj := f.CalculateCJ(j + 1)
-	Vj := magnitude * ((Cj - angle) / float32(stepSize))
+	Vj := magnitude * ((Cj - angle) / float32(f.stepSize))
 
 	return Vj
 }
 
-func (f *Features) Partition(data [][]float32, y, x, step int) [][]float32 {
+func (f *HOG) Partition(data [][]float32, y, x, step int) [][]float32 {
 	result := make([][]float32, step)
 
 	for i := range step {
@@ -94,7 +129,7 @@ func (f *Features) Partition(data [][]float32, y, x, step int) [][]float32 {
 	return result
 }
 
-func (f *Features) BuildRow(magnitude, angle float32) (int, float32, float32) {
+func (f *HOG) BuildRow(magnitude, angle float32) (int, float32, float32) {
 	valueJ := f.CalculateJ(angle)
 	Vj := f.CalculateValueJ(magnitude, angle, valueJ)
 	Vj_1 := magnitude - Vj
@@ -102,7 +137,7 @@ func (f *Features) BuildRow(magnitude, angle float32) (int, float32, float32) {
 	return int(valueJ), Vj, Vj_1
 }
 
-func (f *Features) BuildBin(magnitudes, angles [][]float32, i, j, step int) []float32 {
+func (f *HOG) BuildBin(magnitudes, angles [][]float32, i, j, step int) []float32 {
 	var bin []float32
 
 	magnitudeValues := f.Partition(magnitudes, i, j, step)
@@ -110,7 +145,7 @@ func (f *Features) BuildBin(magnitudes, angles [][]float32, i, j, step int) []fl
 
 	for k := range len(magnitudeValues) {
 		for l := range len(magnitudeValues[0]) {
-			bin = make([]float32, numberOfBins)
+			bin = make([]float32, f.numberOfBins)
 
 			valueJ, Vj, Vj_1 := f.BuildRow(magnitudeValues[k][l], angleValues[k][l])
 
@@ -127,7 +162,7 @@ func (f *Features) BuildBin(magnitudes, angles [][]float32, i, j, step int) []fl
 	return bin
 }
 
-func (f *Features) HistogramPointsNine(magnitudes, angles [][]float32) [][][]float32 {
+func (f *HOG) HistogramPointsNine(magnitudes, angles [][]float32) [][][]float32 {
 	hist := make([][][]float32, 0)
 
 	step := 8
@@ -149,7 +184,7 @@ func (f *Features) HistogramPointsNine(magnitudes, angles [][]float32) [][][]flo
 	return hist
 }
 
-func (f *Features) FetchHistValues(hist [][][]float32, i, j int) [][][]float32 {
+func (f *HOG) FetchHistValues(hist [][][]float32, i, j int) [][][]float32 {
 	values := make([][][]float32, 0)
 
 	for k := range 2 {
@@ -165,7 +200,7 @@ func (f *Features) FetchHistValues(hist [][][]float32, i, j int) [][][]float32 {
 	return values
 }
 
-func (f *Features) CalculateK(finalVector []float32) float32 {
+func (f *HOG) CalculateK(finalVector []float32) float32 {
 	var k float64
 
 	for _, x := range finalVector {
@@ -177,17 +212,17 @@ func (f *Features) CalculateK(finalVector []float32) float32 {
 	return float32(k)
 }
 
-func (f *Features) CalculateV2(finalVector []float32, k float32) []float32 {
+func (f *HOG) CalculateV2(finalVector []float32, k float32) []float32 {
 	result := make([]float32, len(finalVector))
 
 	for i, x := range finalVector {
-		result[i] = x / (k + float32(epsilon))
+		result[i] = x / (k + float32(f.epsilon))
 	}
 
 	return result
 }
 
-func (f *Features) CreateFeatures(hist [][][]float32) [][][]float32 {
+func (f *HOG) CreateFeatures(hist [][][]float32) [][][]float32 {
 	featureVectors := [][][]float32{}
 	epsilon := 1e-05
 
@@ -215,4 +250,11 @@ func (f *Features) CreateFeatures(hist [][][]float32) [][][]float32 {
 	}
 
 	return featureVectors
+}
+
+func (f *HOG) HOG(img image.Image) (image.Image, [][][]float32) {
+	var hogImg image.Image
+	var features [][][]float32
+
+	return hogImg, features
 }

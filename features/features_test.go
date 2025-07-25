@@ -9,12 +9,83 @@ import (
 	"path/filepath"
 	"testing"
 
-	_ "image/jpeg"
+	"image/jpeg"
 	"image/png"
 
 	"github.com/kachaje/hog/features"
-	"github.com/kachaje/hog/hog"
 )
+
+func TestImgToGray(t *testing.T) {
+	reader, err := os.Open(filepath.Join("..", "data", "flower.jpg"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer reader.Close()
+
+	img, _, err := image.Decode(reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	f := features.NewHOG(nil, nil)
+
+	grayImg := f.ImgToGray(img)
+
+	filename := "outputGray.png"
+
+	outputFile, err := os.Create(filename)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		outputFile.Close()
+
+		os.Remove(filename)
+	}()
+
+	err = jpeg.Encode(outputFile, grayImg, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestResize(t *testing.T) {
+	reader, err := os.Open(filepath.Join("..", "data", "flower.jpg"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer reader.Close()
+
+	img, _, err := image.Decode(reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	f := features.NewHOG(nil, nil)
+
+	newImg := f.Resize(img, 64, 128)
+
+	grayImg := f.ImgToGray(newImg)
+
+	filename := "outputShrink.jpg"
+
+	outputFile, err := os.Create(filename)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		outputFile.Close()
+
+		if false {
+			os.Remove(filename)
+		}
+	}()
+
+	err = jpeg.Encode(outputFile, grayImg, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
 
 func TestImgToArray(t *testing.T) {
 	reader, err := os.Open(filepath.Join("..", "data", "flowerGray.jpg"))
@@ -28,10 +99,9 @@ func TestImgToArray(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	h := hog.HOG{}
-	f := features.Features{}
+	f := features.NewHOG(nil, nil)
 
-	grayImg := h.ImgToGray(img)
+	grayImg := f.ImgToGray(img)
 
 	result := f.ImgToArray(*grayImg)
 
@@ -89,7 +159,7 @@ func TestArrayToImg(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	f := features.Features{}
+	f := features.NewHOG(nil, nil)
 
 	magFilename := "outputMag.png"
 	thetaFilename := "outputTheta.png"
@@ -151,7 +221,7 @@ func TestPartition(t *testing.T) {
 
 	step := 3
 
-	f := features.Features{}
+	f := features.NewHOG(nil, nil)
 
 	result := f.Partition(data, 1, 2, step)
 
@@ -231,7 +301,7 @@ Actual: %#v`, target, result)
 }
 
 func TestCalculateJ(t *testing.T) {
-	f := features.Features{}
+	f := features.NewHOG(nil, nil)
 
 	targets := map[float32]float32{
 		89.699551773: 3,
@@ -254,7 +324,7 @@ func TestCalculateJ(t *testing.T) {
 }
 
 func TestCalculateCJ(t *testing.T) {
-	f := features.Features{}
+	f := features.NewHOG(nil, nil)
 
 	targets := map[float32]float32{
 		4: 90.0,
@@ -274,7 +344,7 @@ func TestCalculateCJ(t *testing.T) {
 }
 
 func TestCalculateValueJ(t *testing.T) {
-	f := features.Features{}
+	f := features.NewHOG(nil, nil)
 
 	targets := map[float32]map[string]float32{
 		0.002121697: {
@@ -323,7 +393,7 @@ func TestCalculateValueJ(t *testing.T) {
 }
 
 func TestBuildRow(t *testing.T) {
-	f := features.Features{}
+	f := features.NewHOG(nil, nil)
 
 	files, err := os.ReadDir("./fixtures/data/points")
 	if err != nil {
@@ -393,7 +463,7 @@ func TestBuildBin(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	f := features.Features{}
+	f := features.NewHOG(nil, nil)
 
 	result := f.BuildBin(magData, thetaData, 0, 0, 8)
 
@@ -441,7 +511,7 @@ func TestHistogramPointsNine(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	f := features.Features{}
+	f := features.NewHOG(nil, nil)
 
 	hist := f.HistogramPointsNine(magData, thetaData)
 
@@ -481,7 +551,7 @@ func TestHistogramPointsNine(t *testing.T) {
 }
 
 func TestFetchHistValues(t *testing.T) {
-	f := features.Features{}
+	f := features.NewHOG(nil, nil)
 
 	var hist [][][]float32
 
@@ -528,7 +598,7 @@ func TestFetchHistValues(t *testing.T) {
 }
 
 func TestCalculateK(t *testing.T) {
-	f := features.Features{}
+	f := features.NewHOG(nil, nil)
 
 	var hist [][][]float32
 
@@ -581,7 +651,7 @@ func TestCalculateK(t *testing.T) {
 }
 
 func TestCalculateV2(t *testing.T) {
-	f := features.Features{}
+	f := features.NewHOG(nil, nil)
 
 	var hist [][][]float32
 
@@ -646,7 +716,7 @@ func TestCalculateV2(t *testing.T) {
 }
 
 func TestCreateFeatures(t *testing.T) {
-	f := features.Features{}
+	f := features.NewHOG(nil, nil)
 
 	var target, features [][][]float32
 
