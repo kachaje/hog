@@ -768,6 +768,72 @@ Actual: %v`, features[i][j], featureVectors[i][j])
 	}
 }
 
+func TestMagnitudeTheta(t *testing.T) {
+	var targetData, magData, thetaData [][]float32
+
+	data, err := os.ReadFile("../data/dump.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = json.Unmarshal(data, &targetData)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	data, err = os.ReadFile("./fixtures/magnitudes.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = json.Unmarshal(data, &magData)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	data, err = os.ReadFile("./fixtures/thetas.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = json.Unmarshal(data, &thetaData)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	f := hog.NewHOG(nil, nil)
+
+	mag, theta := f.MagnitudeTheta(targetData)
+
+	if mag == nil {
+		t.Fatal("Test failed")
+	}
+
+	for i := range magData {
+		for j := range magData[i] {
+			if mag[i][j] != magData[i][j] {
+				t.Fatalf(`Test failed. 
+Expected: %#v; 
+Actual: %#v`, magData, mag)
+			}
+		}
+	}
+
+	if theta == nil {
+		t.Fatal("Test failed")
+	}
+
+	for i := range thetaData {
+		for j := range thetaData[i] {
+			if theta[i][j] != thetaData[i][j] {
+				t.Fatalf(`Test failed. 
+Expected: %#v; 
+Actual: %#v`, thetaData, theta)
+			}
+		}
+	}
+}
+
 func TestHOG(t *testing.T) {
 	f := hog.NewHOG(nil, nil)
 
