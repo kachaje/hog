@@ -44,9 +44,16 @@ if __name__ == "__main__":
 
     fig, axes = plt.subplots(2, 2, figsize=(10, 8))
 
-    img = resize(color.rgb2gray(io.imread(filename)), (128, 64))
+    rawImg = io.imread(filename)
+
+    plt.imsave("./backups/outputRaw.png", rawImg)
+
+    img = resize(color.rgb2gray(rawImg), (128, 64))
 
     axes[0, 0].imshow(img, cmap="gray")
+
+    plt.imsave("./backups/outputGray.png", img)
+
     axes[0, 0].axis("off")
     axes[0, 0].set_title(filename)
 
