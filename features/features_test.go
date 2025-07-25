@@ -548,6 +548,28 @@ func TestHistogramPointsNine(t *testing.T) {
 	}
 }
 
+func TestFetchHistValues(t *testing.T) {
+	f := features.Features{}
+
+	var hist [][][]float32
+
+	data, err := os.ReadFile("./fixtures/hist.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = json.Unmarshal(data, &hist)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	result := f.FetchHistValues(hist, 0, 0)
+
+	payload, _ := json.Marshal(result)
+
+	fmt.Println(string(payload))
+}
+
 func TestCreateFeatures(t *testing.T) {
 	f := features.Features{}
 

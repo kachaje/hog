@@ -205,6 +205,22 @@ func (f *Features) HistogramPointsNine(magnitudes, angles [][]float32) [][][]flo
 	return hist
 }
 
+func (f *Features) FetchHistValues(hist [][][]float32, i, j int) [][][]float32 {
+	values := make([][][]float32, 0)
+
+	for k := range 2 {
+		row := [][]float32{}
+
+		for l := range 2 {
+			row = append(row, hist[i+k][j+l])
+		}
+
+		values = append(values, row)
+	}
+
+	return values
+}
+
 func (f *Features) CreateFeatures(hist [][][]float32) [][][]float32 {
 	features := [][][]float32{}
 	epsilon := 1e-05
