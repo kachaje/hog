@@ -14,10 +14,11 @@ import (
 
 func main() {
 	var filename string
-	var debug bool
+	var debug, show bool
 
 	flag.StringVar(&filename, "f", "", "file to work with")
 	flag.BoolVar(&debug, "d", false, "enable debug mode")
+	flag.BoolVar(&show, "s", false, "visualise image")
 
 	flag.Parse()
 
@@ -68,9 +69,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	cmd := exec.Command("open", filename)
-	_, err = cmd.CombinedOutput()
-	if err != nil {
-		panic(err)
+	if show {
+		cmd := exec.Command("open", filename)
+		_, err = cmd.CombinedOutput()
+		if err != nil {
+			panic(err)
+		}
 	}
 }
