@@ -172,11 +172,12 @@ func (f *Features) BuildBin(magnitudes, angles [][]float32, i, j, step int) []fl
 			valueJ, Vj, Vj_1 := f.BuildRow(magnitudeValues[k][l], angleValues[k][l])
 
 			if valueJ < 0 {
-				valueJ = step + valueJ
+				bin[step] += Vj
+				bin[0] += Vj_1
+			} else {
+				bin[valueJ] += Vj
+				bin[valueJ+1] += Vj_1
 			}
-
-			bin[valueJ] += Vj
-			bin[valueJ+1] += Vj_1
 		}
 	}
 

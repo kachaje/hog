@@ -563,11 +563,36 @@ func TestFetchHistValues(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	result := f.FetchHistValues(hist, 0, 0)
+	for i := range len(hist) - 1 {
+		for j := range len(hist[0]) - 1 {
+			content, err := os.ReadFile(filepath.Join(".", "fixtures", "values", fmt.Sprintf("values_%v_%v.json", i, j)))
+			if err != nil {
+				t.Fatal(err)
+			}
 
-	payload, _ := json.Marshal(result)
+			values := [][][]float32{}
 
-	fmt.Println(string(payload))
+			err = json.Unmarshal(content, &values)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			result := f.FetchHistValues(hist, i, j)
+
+			for k := range len(values) {
+				for l := range len(values[0]) {
+					for m := range len(values[0][0]) {
+						fResult := float32(math.Floor(float64(result[k][l][m]*1e3)) / 1e3)
+						fValue := float32(math.Floor(float64(values[k][l][m]*1e3)) / 1e3)
+
+						if fResult != fValue {
+							t.Fatalf("Test failed. Expected: %v; Actual: %v", fValue, fResult)
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 func TestCreateFeatures(t *testing.T) {
