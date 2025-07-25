@@ -648,6 +648,71 @@ func TestCalculateK(t *testing.T) {
 	}
 }
 
+func TestCalculateV2(t *testing.T) {
+	f := features.Features{}
+
+	var hist [][][]float32
+
+	data, err := os.ReadFile("./fixtures/hist.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = json.Unmarshal(data, &hist)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for i := range len(hist) - 1 {
+		for j := range len(hist[0]) - 1 {
+			var k float32
+			vector1 := []float32{}
+			vector2 := []float32{}
+
+			content, err := os.ReadFile(filepath.Join(".", "fixtures", "vectors", "k", fmt.Sprintf("vector_k_%v_%v.json", i, j)))
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			err = json.Unmarshal(content, &k)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			content, err = os.ReadFile(filepath.Join(".", "fixtures", "vectors", "1", fmt.Sprintf("vector_round_1_%v_%v.json", i, j)))
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			err = json.Unmarshal(content, &vector1)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			content, err = os.ReadFile(filepath.Join(".", "fixtures", "vectors", "2", fmt.Sprintf("vector_round_2_%v_%v.json", i, j)))
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			err = json.Unmarshal(content, &vector2)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			result := f.CalculateV2(vector1, k)
+
+			for l, target := range vector2 {
+				fResult := float32(math.Floor(float64(result[l]*1e3)) / 1e3)
+				fTarget := float32(math.Floor(float64(target*1e3)) / 1e3)
+
+				if fResult != fTarget {
+					t.Fatalf("Test failed. Expected: %v; Actual: %v", fResult, fTarget)
+				}
+			}
+		}
+	}
+}
+
 func TestCreateFeatures(t *testing.T) {
 	f := features.Features{}
 
@@ -665,5 +730,7 @@ func TestCreateFeatures(t *testing.T) {
 
 	result := f.CreateFeatures(target)
 
-	fmt.Println(result)
+	if false {
+		fmt.Println(result)
+	}
 }

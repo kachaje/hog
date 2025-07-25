@@ -12,6 +12,7 @@ type Features struct{}
 var (
 	numberOfBins = 9
 	stepSize     = 180 / numberOfBins
+	epsilon      = 1e-05
 )
 
 func (f *Features) ImgToArray(img image.Gray) [][]float32 {
@@ -232,6 +233,16 @@ func (f *Features) CalculateK(finalVector []float32) float32 {
 	k = math.Sqrt(k)
 
 	return float32(k)
+}
+
+func (f *Features) CalculateV2(finalVector []float32, k float32) []float32 {
+	result := make([]float32, len(finalVector))
+
+	for i, x := range finalVector {
+		result[i] = x / (k + float32(epsilon))
+	}
+
+	return result
 }
 
 func (f *Features) CreateFeatures(hist [][][]float32) [][][]float32 {
