@@ -565,6 +565,8 @@ func TestFetchHistValues(t *testing.T) {
 
 	for i := range len(hist) - 1 {
 		for j := range len(hist[0]) - 1 {
+			result := f.FetchHistValues(hist, i, j)
+
 			content, err := os.ReadFile(filepath.Join(".", "fixtures", "values", fmt.Sprintf("values_%v_%v.json", i, j)))
 			if err != nil {
 				t.Fatal(err)
@@ -576,8 +578,6 @@ func TestFetchHistValues(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-
-			result := f.FetchHistValues(hist, i, j)
 
 			for k := range len(values) {
 				for l := range len(values[0]) {
