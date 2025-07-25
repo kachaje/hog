@@ -171,6 +171,10 @@ if __name__ == "__main__":
               json.dump(final_vector, f)
 
         k = round(math.sqrt(sum([pow(x, 2) for x in final_vector])), 9)
+
+        with open(f"./backups/features/vector_k_{i}_{j}.json", 'w') as f:
+              json.dump(k, f)
+
         final_vector = [round(x/(k + epsilon), 9) for x in final_vector]
 
         with open(f"./backups/features/vector_round_2_{i}_{j}.json", 'w') as f:
