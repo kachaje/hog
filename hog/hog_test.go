@@ -15,6 +15,55 @@ import (
 	"github.com/kachaje/hog/hog"
 )
 
+func TestImgToArray(t *testing.T) {
+	reader, err := os.Open(filepath.Join("..", "data", "flower.jpg"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer reader.Close()
+
+	img, _, err := image.Decode(reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	f := hog.NewHOG(nil, nil)
+
+	grayImg := f.ImgToGray(img)
+
+	result := f.ImgToArray(*grayImg)
+
+	if result == nil {
+		t.Fatal("Test failed")
+	}
+
+	var target [][]float32
+
+	data, err := os.ReadFile("./fixtures/dump.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = json.Unmarshal(data, &target)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if result == nil {
+		t.Fatal("Test failed")
+	}
+
+	for i := range target {
+		for j := range target[i] {
+			if result[i][j] != target[i][j] {
+				t.Fatalf(`Test failed. 
+Expected: %#v; 
+Actual: %#v`, result, target)
+			}
+		}
+	}
+}
+
 func TestImgToGray(t *testing.T) {
 	reader, err := os.Open(filepath.Join("..", "data", "flower.jpg"))
 	if err != nil {
@@ -82,55 +131,6 @@ func TestResize(t *testing.T) {
 	err = jpeg.Encode(outputFile, grayImg, nil)
 	if err != nil {
 		t.Fatal(err)
-	}
-}
-
-func TestImgToArray(t *testing.T) {
-	reader, err := os.Open(filepath.Join("..", "data", "flowerGray.jpg"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer reader.Close()
-
-	img, _, err := image.Decode(reader)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	f := hog.NewHOG(nil, nil)
-
-	grayImg := f.ImgToGray(img)
-
-	result := f.ImgToArray(*grayImg)
-
-	if result == nil {
-		t.Fatal("Test failed")
-	}
-
-	var target [][]float32
-
-	data, err := os.ReadFile("./fixtures/dump.json")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	err = json.Unmarshal(data, &target)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if result == nil {
-		t.Fatal("Test failed")
-	}
-
-	for i := range target {
-		for j := range target[i] {
-			if result[i][j] != target[i][j] {
-				t.Fatalf(`Test failed. 
-Expected: %#v; 
-Actual: %#v`, result, target)
-			}
-		}
 	}
 }
 
