@@ -835,8 +835,6 @@ Actual: %#v`, thetaData, theta)
 }
 
 func TestHOG(t *testing.T) {
-	t.Skip()
-
 	f := hog.NewHOG(nil, nil)
 
 	reader, err := os.Open(filepath.Join("..", "data", "flower.jpg"))

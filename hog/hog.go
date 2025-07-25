@@ -1,6 +1,7 @@
 package hog
 
 import (
+	"encoding/json"
 	"fmt"
 	"image"
 	"image/color"
@@ -353,6 +354,34 @@ func (f *HOG) HOG(img image.Image, debug bool) (image.Image, [][][]float32) {
 		if err != nil {
 			log.Fatal(err)
 		}
+	}
+
+	dump := f.ImgToArray(*grayImg)
+
+	if debug {
+		payload, _ := json.MarshalIndent(dump, "", "  ")
+
+		os.WriteFile("outputDump.json", payload, 0644)
+	}
+
+	magnitudes, angles := f.MagnitudeTheta(dump)
+
+	if debug {
+		payload, _ := json.MarshalIndent(magnitudes, "", "  ")
+
+		os.WriteFile("outputMagnitudes.json", payload, 0644)
+
+		payload, _ = json.MarshalIndent(angles, "", "  ")
+
+		os.WriteFile("outputAngles.json", payload, 0644)
+	}
+
+	histogram := f.HistogramPointsNine(magnitudes, angles)
+
+	if debug {
+		payload, _ := json.MarshalIndent(histogram, "", "  ")
+
+		os.WriteFile("outputHist.json", payload, 0644)
 	}
 
 	return hogImg, features
