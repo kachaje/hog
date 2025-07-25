@@ -1,40 +1,74 @@
 package main
 
 import (
+	"encoding/json"
+	"flag"
+	"image"
+	"image/png"
 	"log"
+	"os"
 	"os/exec"
 
-	"gonum.org/v1/plot"
-	"gonum.org/v1/plot/plotter"
-	"gonum.org/v1/plot/vg"
+	"github.com/kachaje/hog/hog"
 )
 
 func main() {
-	pts := plotter.XYs{
-		{X: 1, Y: 1},
-		{X: 2, Y: 3},
-		{X: 3, Y: 2},
-		{X: 4, Y: 4},
-		{X: 5, Y: 5},
+	var filename string
+	var debug bool
+
+	flag.StringVar(&filename, "f", "", "file to work with")
+	flag.BoolVar(&debug, "d", false, "enable debug mode")
+
+	flag.Parse()
+
+	if filename == "" {
+		log.Fatal("Missing required filename")
 	}
 
-	p := plot.New()
+	h := hog.NewHOG(nil, nil)
 
-	p.Title.Text = "Simple Scatter Plot"
-	p.X.Label.Text = "X-axis"
-	p.Y.Label.Text = "Y-axis"
-
-	s, err := plotter.NewScatter(pts)
+	reader, err := os.Open(filename)
 	if err != nil {
-		log.Panic(err)
+		log.Fatal(err)
 	}
-	p.Add(s)
+	defer reader.Close()
 
-	if err := p.Save(4*vg.Inch, 4*vg.Inch, "output.png"); err != nil {
-		log.Panic(err)
+	img, _, err := image.Decode(reader)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	cmd := exec.Command("open", "output.png")
+	hogImg, features, err := h.HOG(img, debug)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	filename = "outputHOG.png"
+
+	outputFile, err := os.Create(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func() {
+		outputFile.Close()
+	}()
+
+	err = png.Encode(outputFile, hogImg)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	payload, err := json.MarshalIndent(features, "", "  ")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = os.WriteFile("outputFeatures.json", payload, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	cmd := exec.Command("open", filename)
 	_, err = cmd.CombinedOutput()
 	if err != nil {
 		panic(err)
