@@ -809,6 +809,10 @@ func TestMagnitudeTheta(t *testing.T) {
 		t.Fatal("Test failed")
 	}
 
+	if theta == nil {
+		t.Fatal("Test failed")
+	}
+
 	for i := range magData {
 		for j := range magData[i] {
 			if mag[i][j] != magData[i][j] {
@@ -817,10 +821,6 @@ Expected: %#v;
 Actual: %#v`, magData, mag)
 			}
 		}
-	}
-
-	if theta == nil {
-		t.Fatal("Test failed")
 	}
 
 	for i := range thetaData {
