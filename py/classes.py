@@ -38,11 +38,11 @@ for cat in categories:
 
 # %%
 all_images = []
-#labels = []
+labels = []
 
 def load_image(ids,path=image_folder):
     img = cv.imread(image_folder+ids+'.jpg',cv.IMREAD_GRAYSCALE) #load at gray scale
-    #img = cv.cvtColor(img, cv.COLOR_BGR2GRAY) #convert to gray scale
+    # img = cv.cvtColor(img, cv.COLOR_BGR2GRAY) #convert to gray scale
     return img,ids
 
 for ids in tqdm(list(styles.id)[:20000]):
@@ -50,7 +50,7 @@ for ids in tqdm(list(styles.id)[:20000]):
       img,ids = load_image(str(ids))
       if img is not None:
           all_images.append([img,int(ids)])
-      #labels.append(ids)
+      labels.append(ids)
 len(all_images)
 
 # %%
@@ -271,9 +271,9 @@ hog_features_test.append(fd)
 
 hog_features_test = np.array(hog_features_test)
 y_pred_user = classifier.predict(scaler.transform(hog_features_test))
-#print(plt.imshow(hog_images_test))
+# print(plt.imshow(hog_images_test))
 print(y_pred_user)
-print("Predicted MaterCategory: ", mapper[mapper['class']==int(y_pred_user)]['masterCategory'])
+print("Predicted MasterCategory: ", mapper[mapper['class']==int(y_pred_user)]['masterCategory'])
 
 # %%
 plt.imshow(hog_img)
