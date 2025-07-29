@@ -1,0 +1,49 @@
+{
+  "gender": {
+    "Boys": 830,
+    "Girls": 655,
+    "Men": 22165,
+    "Unisex": 2164,
+    "Women": 18632
+  },
+  "masterCategory": {
+    "Accessories": 11289,
+    "Apparel": 21400,
+    "Footwear": 9222,
+    "Free Items": 105,
+    "Home": 1,
+    "Personal Care": 2404,
+    "Sporting Goods": 25
+  },
+  "season": {
+    "2011": 20,
+    "Fall": 11445,
+    "Sports": 1,
+    "Spring": 2985,
+    "Summer": 21476,
+    "Winter": 8519
+  },
+  "subCategory": {
+    "Bags": 3055,
+    "Bottomwear": 2694,
+    "Eyewear": 1073,
+    "Fragrance": 1012,
+    "Innerwear": 1808,
+    "Jewellery": 1080,
+    "Sandal": 963,
+    "Shoes": 7344,
+    "Topwear": 15405,
+    "Watches": 2542
+  },
+  "usage": {
+    "Casual": 34414,
+    "Ethnic": 3208,
+    "Formal": 2359,
+    "NA": 316,
+    "Party": 29,
+    "Quechua Forclaz 500 L Beige Cn": 1,
+    "Smart Casual": 67,
+    "Sports": 4004,
+    "Travel": 26
+  }
+}
